@@ -1,117 +1,118 @@
-import React, { useState } from 'react'
-import './Signup.css'
+import type { FormEvent } from "react";
+import { useState } from "react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Auth.css";
 
-interface SignupProps {
-  onNavigate: (page: 'landing' | 'login' | 'signup') => void
-}
+type SignupProps = {
+  darkMode: boolean;
+};
 
-const Signup: React.FC<SignupProps> = ({ onNavigate }) => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+export default function Signup({ darkMode }: SignupProps) {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    
-    if (password !== confirmPassword) {
-      setError('Passwords do not match!')
-      return
+  const updateForm = (field: keyof typeof form, value: string) => {
+    setForm((currentForm) => ({ ...currentForm, [field]: value }));
+    setError("");
+  };
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+
+    if (!form.name.trim() || !form.email.trim()) {
+      setError("Enter your name and email.");
+      return;
     }
-    
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long!')
-      return
-    }
-    
-    console.log('Signup:', { name, email, password })
-    setSuccess(true)
-  }
 
-  if (success) {
-    return (
-      <div className="auth-container">
-        <div className="auth-card">
-          <div className="success-message">
-            <h2 className="auth-title">Success!</h2>
-            <p className="success-text">Your account has been created successfully.</p>
-            <button onClick={() => onNavigate('login')} className="auth-button">Go to Login</button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    navigate("/candidate");
+  };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Sign Up</h2>
-        {error && <div className="error-message">{error}</div>}
+    <main className={`auth-page ${darkMode ? "dark" : "light"}`}>
+      <section className="auth-card">
+        <div className="auth-heading">
+          <span>Candidate signup</span>
+          <h1>Create account</h1>
+          <p>Start a candidate profile that can later connect to real Clerk authentication.</p>
+        </div>
+
+        <div className="auth-note">
+          <CheckCircle2 size={17} />
+          <span>Applications and status tracking live in the candidate portal.</span>
+        </div>
+
+        {error && <p className="auth-error">{error}</p>}
+
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+          <label>
+            Full name
             <input
               type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your full name"
-              required
+              value={form.name}
+              onChange={(event) => updateForm("name", event.target.value)}
+              placeholder="Sophia Nguyen"
             />
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
+          <label>
+            Email
             <input
               type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
+              value={form.email}
+              onChange={(event) => updateForm("email", event.target.value)}
+              placeholder="you@example.com"
             />
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <label>
+            Password
             <input
               type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Create a password (min 6 characters)"
-              required
+              value={form.password}
+              onChange={(event) => updateForm("password", event.target.value)}
+              placeholder="Create a password"
             />
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+          <label>
+            Confirm password
             <input
               type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={form.confirmPassword}
+              onChange={(event) =>
+                updateForm("confirmPassword", event.target.value)
+              }
               placeholder="Confirm your password"
-              required
             />
-          </div>
+          </label>
 
-          <button type="submit" className="auth-button">Sign Up</button>
+          <button type="submit" className="auth-submit">
+            Create account
+            <ArrowRight size={17} />
+          </button>
         </form>
 
-        <p className="auth-link">
-          Already have an account? <button onClick={() => onNavigate('login')} className="link-button">Login</button>
+        <p className="auth-footer">
+          Already have an account? <Link to="/login">Login</Link>
         </p>
-        
-        <p className="auth-link">
-          <button onClick={() => onNavigate('landing')} className="link-button">Back to Home</button>
-        </p>
-      </div>
-    </div>
-  )
+      </section>
+    </main>
+  );
 }
-
-export default Signup

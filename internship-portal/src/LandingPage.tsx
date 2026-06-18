@@ -1,87 +1,122 @@
-import React from 'react'
-import './LandingPage.css'
+import { ArrowRight, BadgeCheck, Building2, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import heroImage from "./assets/hero.png";
+import { featuredDepartments, internshipPostings } from "./portalData";
+import "./LandingPage.css";
 
-interface LandingPageProps {
-  onNavigate: (page: 'landing' | 'login' | 'signup') => void
-}
+type LandingPageProps = {
+  darkMode: boolean;
+};
 
-const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
+export default function LandingPage({ darkMode }: LandingPageProps) {
+  const openRoles = internshipPostings.filter(
+    (posting) => posting.status === "Open"
+  );
+
   return (
-    <div className="landing-page">
-      <nav className="navbar">
-        <div className="nav-container">
-          <div className="logo">D'Accubin Interns</div>
-          <div className="nav-links">
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#about" className="nav-link">About</a>
-            <a href="#contact" className="nav-link">Contact</a>
-            <button onClick={() => onNavigate('signup')} className="nav-button">Get Started</button>
-          </div>
+    <main className={`landing-page ${darkMode ? "dark" : "light"}`}>
+      <section className="hero-section">
+        <div className="hero-media" aria-hidden="true">
+          <img src={heroImage} alt="" />
         </div>
-      </nav>
-
-      <section className="hero">
         <div className="hero-content">
-          <h1 className="hero-title">Find Your Dream Internship</h1>
-          <p className="hero-description">
-            Connect with top companies and kickstart your career with our comprehensive internship platform. 
-            Discover opportunities that match your skills and aspirations.
+          <span className="hero-kicker">
+            <Sparkles size={16} />
+            Internship lifecycle platform
+          </span>
+          <h1>Interns Portal</h1>
+          <p>
+            A single place for students to discover internship opportunities and
+            for staff to manage every intern once the program begins.
           </p>
-          <div className="hero-buttons">
-            <button onClick={() => onNavigate('signup')} className="primary-button">Start Free Trial</button>
-            <a href="#features" className="secondary-button">Learn More</a>
+          <div className="hero-actions">
+            <Link to="/internships" className="primary-action">
+              View internships
+              <ArrowRight size={17} />
+            </Link>
+            <Link to="/dashboard" className="secondary-action">
+              Staff dashboard
+            </Link>
           </div>
         </div>
       </section>
 
-      <section id="features" className="features">
-        <div className="features-container">
-          <h2 className="section-title">Why Choose Us?</h2>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">🎯</div>
-              <h3 className="feature-title">Smart Matching</h3>
-              <p className="feature-description">AI-powered matching to find internships that fit your profile perfectly</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">📊</div>
-              <h3 className="feature-title">Track Progress</h3>
-              <p className="feature-description">Monitor your applications and interview progress in real-time</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🤝</div>
-              <h3 className="feature-title">Direct Connect</h3>
-              <p className="feature-description">Connect directly with hiring managers and recruiters</p>
-            </div>
+      <section className="metric-strip" aria-label="Program snapshot">
+        <div>
+          <strong>{openRoles.length}</strong>
+          <span>open roles</span>
+        </div>
+        <div>
+          <strong>{featuredDepartments.length}</strong>
+          <span>departments</span>
+        </div>
+        <div>
+          <strong>12 weeks</strong>
+          <span>typical program</span>
+        </div>
+      </section>
+
+      <section className="content-band">
+        <div className="section-heading">
+          <span>For candidates</span>
+          <h2>Find a track that fits your next step.</h2>
+        </div>
+
+        <div className="department-grid">
+          {featuredDepartments.map((department) => (
+            <article key={department.name} className="department-card">
+              <div className="department-icon">
+                <department.icon size={22} />
+              </div>
+              <h3>{department.name}</h3>
+              <p>{department.summary}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="split-band">
+        <div>
+          <span className="section-label">For staff</span>
+          <h2>Operational enough for real internship coordination.</h2>
+          <p>
+            The dashboard keeps the internal view focused on search, filters,
+            intern records, status, dates, and quick admin actions.
+          </p>
+        </div>
+        <div className="staff-preview">
+          <div className="preview-row">
+            <span className="preview-avatar">SN</span>
+            <span>Sophia Nguyen</span>
+            <strong>Active</strong>
+          </div>
+          <div className="preview-row">
+            <span className="preview-avatar alt">MC</span>
+            <span>Marcus Chen</span>
+            <strong>Active</strong>
+          </div>
+          <div className="preview-row muted">
+            <span className="preview-avatar quiet">JO</span>
+            <span>James Okafor</span>
+            <strong>Inactive</strong>
           </div>
         </div>
       </section>
 
-      <section id="about" className="about">
-        <div className="about-container">
-          <h2 className="section-title">About D'Accubin Interns</h2>
-          <p className="about-description">
-            We're dedicated to bridging the gap between talented students and amazing internship opportunities. 
-            Our platform makes it easy to discover, apply, and land your dream internship.
-          </p>
+      <section className="process-band">
+        <div className="process-item">
+          <BadgeCheck size={19} />
+          <span>Discover roles</span>
+        </div>
+        <div className="process-item">
+          <ArrowRight size={19} />
+          <span>Apply and sign in</span>
+        </div>
+        <div className="process-item">
+          <Building2 size={19} />
+          <span>Join the staff-managed program</span>
         </div>
       </section>
-
-      <section id="contact" className="contact">
-        <div className="contact-container">
-          <h2 className="section-title">Get In Touch</h2>
-          <p className="contact-description">Have questions? We'd love to hear from you.</p>
-          <button className="contact-button">Contact Us</button>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <div className="footer-content">
-          <p>&copy; 2024 D'Accubin Interns. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
-  )
+    </main>
+  );
 }
-
-export default LandingPage

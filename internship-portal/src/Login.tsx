@@ -1,71 +1,104 @@
-import React, { useState } from 'react'
-import './Login.css'
+import type { FormEvent } from "react";
+import { useState } from "react";
+import { ArrowRight, Building2, UserRound } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Auth.css";
 
-interface LoginProps {
-  onNavigate: (page: 'landing' | 'login' | 'signup') => void
-}
+type LoginProps = {
+  darkMode: boolean;
+  onStaffLogin: (email: string) => void;
+};
 
-const Login: React.FC<LoginProps> = ({ onNavigate }) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+type LoginMode = "candidate" | "staff";
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    
-    if (!email || !password) {
-      setError('Please fill in all fields')
-      return
+export default function Login({ darkMode, onStaffLogin }: LoginProps) {
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<LoginMode>("candidate");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    setError("");
+
+    if (!email.trim() || !password.trim()) {
+      setError("Enter your email and password.");
+      return;
     }
-    
-    console.log('Login:', { email, password })
-    alert('Login functionality would connect to backend here')
-  }
+
+    if (mode === "staff") {
+      onStaffLogin(email.trim());
+      navigate("/dashboard");
+      return;
+    }
+
+    navigate("/candidate");
+  };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Login</h2>
-        {error && <div className="error-message">{error}</div>}
+    <main className={`auth-page ${darkMode ? "dark" : "light"}`}>
+      <section className="auth-card">
+        <div className="auth-heading">
+          <span>Welcome back</span>
+          <h1>Login</h1>
+          <p>Use candidate access for applications or staff access for intern management.</p>
+        </div>
+
+        <div className="auth-switch" aria-label="Login type">
+          <button
+            type="button"
+            className={mode === "candidate" ? "active" : ""}
+            onClick={() => setMode("candidate")}
+          >
+            <UserRound size={16} />
+            Candidate
+          </button>
+          <button
+            type="button"
+            className={mode === "staff" ? "active" : ""}
+            onClick={() => setMode("staff")}
+          >
+            <Building2 size={16} />
+            Staff
+          </button>
+        </div>
+
+        {error && <p className="auth-error">{error}</p>}
+
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
+          <label>
+            Email
             <input
               type="email"
-              id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder={
+                mode === "staff" ? "admin@internportal.com" : "you@example.com"
+              }
             />
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <label>
+            Password
             <input
               type="password"
-              id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
-              required
             />
-          </div>
+          </label>
 
-          <button type="submit" className="auth-button">Login</button>
+          <button type="submit" className="auth-submit">
+            Continue
+            <ArrowRight size={17} />
+          </button>
         </form>
 
-        <p className="auth-link">
-          Don't have an account? <button onClick={() => onNavigate('signup')} className="link-button">Sign up</button>
+        <p className="auth-footer">
+          New here? <Link to="/signup">Create an account</Link>
         </p>
-        
-        <p className="auth-link">
-          <button onClick={() => onNavigate('landing')} className="link-button">Back to Home</button>
-        </p>
-      </div>
-    </div>
-  )
+      </section>
+    </main>
+  );
 }
-
-export default Login

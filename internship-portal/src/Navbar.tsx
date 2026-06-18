@@ -1,29 +1,48 @@
-import { Link } from 'react-router-dom'
-import { UserButton, SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react'
+import { BriefcaseBusiness, LayoutDashboard, Moon, Sun } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import logo from "./assets/Logo.svg";
+import "./Navbar.css";
 
-export default function Navbar() {
+type NavbarProps = {
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
+};
+
+export default function Navbar({ darkMode, onToggleDarkMode }: NavbarProps) {
   return (
-    <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-200">
-      <Link to="/" className="text-2xl font-bold text-blue-600">
-        InternPortal
+    <header className="site-header">
+      <Link to="/" className="site-brand" aria-label="Interns Portal home">
+        <img src={logo} alt="" />
+        <span>Interns Portal</span>
       </Link>
-      
-      <div className="flex gap-6 items-center">
-        <Link to="/internships" className="text-gray-600 hover:text-blue-600 font-medium">Internships</Link>
-        
-        <SignedIn>
-          <Link to="/dashboard" className="text-gray-600 hover:text-blue-600 font-medium">Dashboard</Link>
-          <UserButton afterSignOutUrl="/" />
-        </SignedIn>
-        
-        <SignedOut>
-          <SignInButton mode="modal">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-              Sign In
-            </button>
-          </SignInButton>
-        </SignedOut>
+
+      <nav className="site-nav" aria-label="Primary navigation">
+        <NavLink to="/internships">Internships</NavLink>
+        <NavLink to="/candidate">Candidate</NavLink>
+        <NavLink to="/dashboard">
+          <LayoutDashboard size={16} />
+          Staff
+        </NavLink>
+      </nav>
+
+      <div className="site-actions">
+        <button
+          type="button"
+          className="icon-button"
+          onClick={onToggleDarkMode}
+          aria-label="Toggle dark mode"
+          title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {darkMode ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+        <Link to="/login" className="login-link">
+          Login
+        </Link>
+        <Link to="/signup" className="nav-cta">
+          <BriefcaseBusiness size={16} />
+          Apply
+        </Link>
       </div>
-    </nav>
-  )
+    </header>
+  );
 }

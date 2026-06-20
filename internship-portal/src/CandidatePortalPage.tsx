@@ -19,8 +19,8 @@ export default function CandidatePortalPage({
           <span>Candidate portal</span>
           <h1>Your internship application hub.</h1>
           <p>
-            Save your profile, track applications, and keep a clear view of the
-            next step once real authentication is connected.
+            Save your profile, track applications, and keep a clear view of each
+            step from discovery to offer.
           </p>
           <Link to="/internships" className="primary-action candidate-action">
             Browse roles

@@ -135,9 +135,17 @@
 
 .posting-card h2 {
   margin: 22px 0 10px;
-  color: var(--text-strong);
   font-size: 1.45rem;
   line-height: 1.15;
+}
+
+.posting-card h2 a {
+  color: var(--text-strong);
+  text-decoration: none;
+}
+
+.posting-card h2 a:hover {
+  color: var(--accent);
 }
 
 .posting-card p {

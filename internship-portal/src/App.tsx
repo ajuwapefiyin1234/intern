@@ -11,6 +11,8 @@ import { InternFormPage } from "./components/InternFormPage";
 import { MOCK_INTERNS } from "./components/types";
 import type { Intern } from "./components/types";
 import CandidatePortalPage from "./CandidatePortalPage";
+import Footer from "./Footer";
+import InternshipDetailPage from "./InternshipDetailPage";
 import InternshipsPage from "./InternshipsPage";
 import LandingPage from "./LandingPage";
 import Login from "./Login";
@@ -27,6 +29,7 @@ function PublicLayout({ darkMode, onToggleDarkMode }: ThemeProps) {
     <div className={`public-shell ${darkMode ? "dark" : "light"}`}>
       <Navbar darkMode={darkMode} onToggleDarkMode={onToggleDarkMode} />
       <Outlet />
+      <Footer />
     </div>
   );
 }
@@ -93,6 +96,10 @@ export default function App() {
           <Route
             path="/internships"
             element={<InternshipsPage darkMode={darkMode} />}
+          />
+          <Route
+            path="/internships/:id"
+            element={<InternshipDetailPage darkMode={darkMode} />}
           />
           <Route
             path="/candidate"

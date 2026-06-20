@@ -76,7 +76,9 @@ export default function InternshipsPage({ darkMode }: InternshipsPageProps) {
               <span>{posting.department}</span>
               <strong>{posting.status}</strong>
             </div>
-            <h2>{posting.title}</h2>
+            <h2>
+              <Link to={`/internships/${posting.id}`}>{posting.title}</Link>
+            </h2>
             <p>{posting.summary}</p>
             <div className="posting-meta">
               <span>
@@ -90,8 +92,8 @@ export default function InternshipsPage({ darkMode }: InternshipsPageProps) {
                 <span key={skill}>{skill}</span>
               ))}
             </div>
-            <Link to="/signup" className="posting-action">
-              Start application
+            <Link to={`/internships/${posting.id}`} className="posting-action">
+              View details
               <ArrowRight size={16} />
             </Link>
           </article>

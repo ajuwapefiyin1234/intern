@@ -16,6 +16,7 @@ export type InternshipPosting = {
   status: "Open" | "Closing soon";
   summary: string;
   skills: string[];
+  highlights: string[];
 };
 
 export const internshipPostings: InternshipPosting[] = [
@@ -29,6 +30,11 @@ export const internshipPostings: InternshipPosting[] = [
     summary:
       "Build React interfaces, improve accessibility, and ship polished product experiences with a mentor.",
     skills: ["React", "TypeScript", "UI systems"],
+    highlights: [
+      "Pair with product engineers on production UI work.",
+      "Improve reusable components and accessibility details.",
+      "Present a polished feature demo at the end of the program.",
+    ],
   },
   {
     id: 2,
@@ -40,6 +46,11 @@ export const internshipPostings: InternshipPosting[] = [
     summary:
       "Support reporting, reconcile program expenses, and learn how finance teams guide operational decisions.",
     skills: ["Excel", "Reporting", "Analysis"],
+    highlights: [
+      "Prepare weekly reporting packs for program leads.",
+      "Assist with reconciliations and expense categorization.",
+      "Learn how finance data supports department planning.",
+    ],
   },
   {
     id: 3,
@@ -51,6 +62,11 @@ export const internshipPostings: InternshipPosting[] = [
     summary:
       "Plan campaign experiments, create content briefs, and measure acquisition across digital channels.",
     skills: ["Content", "Analytics", "Campaigns"],
+    highlights: [
+      "Draft campaign briefs for candidate awareness.",
+      "Analyze channel performance and summarize insights.",
+      "Support social and email content production.",
+    ],
   },
   {
     id: 4,
@@ -62,6 +78,11 @@ export const internshipPostings: InternshipPosting[] = [
     summary:
       "Help run onboarding, mentorship matching, feedback cycles, and intern community programming.",
     skills: ["Coordination", "People ops", "Communication"],
+    highlights: [
+      "Coordinate onboarding moments and intern check-ins.",
+      "Support mentorship matching and feedback collection.",
+      "Help improve the candidate-to-intern handoff.",
+    ],
   },
 ];
 

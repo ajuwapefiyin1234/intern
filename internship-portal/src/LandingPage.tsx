@@ -104,18 +104,18 @@ export default function LandingPage({ darkMode }: LandingPageProps) {
       </section>
 
       <section className="process-band">
-        <div className="process-item">
+        <Link to="/internships" className="process-item">
           <BadgeCheck size={19} />
           <span>Discover roles</span>
-        </div>
-        <div className="process-item">
+        </Link>
+        <Link to="/signup" className="process-item">
           <ArrowRight size={19} />
           <span>Apply and sign in</span>
-        </div>
-        <div className="process-item">
+        </Link>
+        <Link to="/dashboard" className="process-item">
           <Building2 size={19} />
           <span>Join the staff-managed program</span>
-        </div>
+        </Link>
       </section>
     </main>
   );

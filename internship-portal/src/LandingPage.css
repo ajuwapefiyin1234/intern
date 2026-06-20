@@ -279,10 +279,16 @@
   align-items: center;
   gap: 12px;
   font-weight: 800;
+  text-decoration: none;
 }
 
 .process-item svg {
   color: var(--accent);
+}
+
+.process-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 900px) {

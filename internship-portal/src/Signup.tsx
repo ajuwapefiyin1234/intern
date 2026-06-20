@@ -50,7 +50,7 @@ export default function Signup({ darkMode }: SignupProps) {
         <div className="auth-heading">
           <span>Candidate signup</span>
           <h1>Create account</h1>
-          <p>Start a candidate profile that can later connect to real Clerk authentication.</p>
+          <p>Start a candidate profile for applications, updates, and program communication.</p>
         </div>
 
         <div className="auth-note">

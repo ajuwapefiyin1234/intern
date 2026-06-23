@@ -54,6 +54,47 @@ img {
   min-height: 100svh;
 }
 
+.primary-action,
+.secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.primary-action {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 96, 120, 0.3);
+}
+
+.primary-action:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 96, 120, 0.35);
+}
+
+.secondary-action {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+}
+
+.secondary-action:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
 .public-shell.dark,
 .landing-page.dark,
 .internships-page.dark,

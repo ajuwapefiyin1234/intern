@@ -119,6 +119,7 @@
   position: relative;
   min-height: min(800px, calc(100svh - 68px));
   display: flex;
+  justify-content: center;
   align-items: center;
   padding: 120px 32px 80px;
   overflow: hidden;
@@ -151,13 +152,14 @@
   z-index: 1;
   width: min(720px, 100%);
   color: #f7fbfc;
+  margin: 0 auto;
   animation: fadeInUp 0.8s ease-out;
 }
 
 /* Hero Slides */
 .hero-slides {
   position: relative;
-  min-height: 200px;
+  min-height: 320px;
 }
 
 .hero-slide {
@@ -212,14 +214,15 @@
   color: rgba(247, 251, 252, 0.9);
   font-size: 1.15rem;
   line-height: 1.75;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 16px;
-  margin-bottom: 40px;
+  margin: 0 auto 40px;
   align-items: center;
 }
 

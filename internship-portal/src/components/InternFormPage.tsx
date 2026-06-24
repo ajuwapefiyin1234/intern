@@ -20,6 +20,7 @@ interface FormData {
   department: Department | "";
   startDate: string;
   status: Status;
+  reason: string;
 }
 
 const emptyForm: FormData = {
@@ -28,6 +29,7 @@ const emptyForm: FormData = {
   department: "",
   startDate: "",
   status: "Active",
+  reason: "",
 };
 
 const getInitialForm = (
@@ -41,6 +43,7 @@ const getInitialForm = (
       department: intern.department,
       startDate: intern.startDate,
       status: intern.status,
+      reason: intern.reason || "",
     };
   }
 
@@ -92,15 +95,16 @@ export function InternFormPage({
       department: form.department,
       startDate: form.startDate,
       status: form.status,
+      reason: form.status === "Inactive" ? form.reason.trim() : undefined,
     });
-    navigate("/dashboard");
+    navigate("/staff/interns");
   };
 
   const handleBack = () => {
     if (onCancel) {
       onCancel();
     }
-    navigate("/dashboard");
+    navigate("/staff/interns");
   };
 
   return (
@@ -115,7 +119,7 @@ export function InternFormPage({
       <main className="form-main">
         <button className="back-button" type="button" onClick={handleBack}>
           <ArrowLeft size={15} />
-          Back to All Interns
+          Back to Manage Interns
         </button>
 
         <section className="intern-form-card">
@@ -189,6 +193,18 @@ export function InternFormPage({
                 <option value="Inactive">Inactive</option>
               </select>
             </label>
+
+            {form.status === "Inactive" && (
+              <label>
+                Reason for Inactivity
+                <input
+                  type="text"
+                  value={form.reason}
+                  onChange={(event) => updateForm("reason", event.target.value)}
+                  placeholder="e.g. Medical leave, personal reasons, etc."
+                />
+              </label>
+            )}
 
             <div className="form-actions">
               <button className="cancel-button" type="button" onClick={handleBack}>

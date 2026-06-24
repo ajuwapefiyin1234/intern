@@ -9,6 +9,7 @@ export interface Intern {
   startDate: string;
   status: Status;
   avatar: string;
+  reason?: string;
 }
 
 export const DEPARTMENTS: Department[] = [

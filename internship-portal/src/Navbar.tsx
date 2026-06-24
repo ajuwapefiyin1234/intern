@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, LayoutDashboard, Moon, Sun } from "lucide-react";
+import { LayoutDashboard, Moon, Sun } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import logo from "./assets/Logo.svg";
 import "./Navbar.css";
@@ -11,9 +11,9 @@ type NavbarProps = {
 export default function Navbar({ darkMode, onToggleDarkMode }: NavbarProps) {
   return (
     <header className="site-header">
-      <Link to="/" className="site-brand" aria-label="Interns Portal home">
+      <Link to="/" className="site-brand" aria-label="D'accubin Interns home">
         <img src={logo} alt="" />
-        <span>Interns Portal</span>
+        <span>D'accubin Interns</span>
       </Link>
 
       <nav className="site-nav" aria-label="Primary navigation">
@@ -39,7 +39,6 @@ export default function Navbar({ darkMode, onToggleDarkMode }: NavbarProps) {
           Login
         </Link>
         <Link to="/signup" className="nav-cta">
-          <BriefcaseBusiness size={16} />
           Apply
         </Link>
       </div>

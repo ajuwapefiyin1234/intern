@@ -137,6 +137,21 @@ export default function StaffPortalPage({
               </aside>
             </section>
 
+            <section className="portal-two-column" style={{ marginBottom: 20 }}>
+              <article className="portal-card" style={{ padding: 20 }}>
+                <div className="portal-card-header">
+                  <h2>Quick Links</h2>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 }}>
+                  <Link to="/staff/departments" className="manage-interns" style={{ textDecoration: "none" }}>Departments</Link>
+                  <Link to="/staff/supervisors" className="manage-interns" style={{ textDecoration: "none" }}>Supervisors</Link>
+                  <Link to="/staff/attendance" className="manage-interns" style={{ textDecoration: "none" }}>Attendance</Link>
+                  <Link to="/staff/evaluations" className="manage-interns" style={{ textDecoration: "none" }}>Evaluations</Link>
+                  <Link to="/staff/profile" className="manage-interns" style={{ textDecoration: "none" }}>Profile</Link>
+                </div>
+              </article>
+            </section>
+
             <section className="portal-stat-grid">
               <StatCard label="Active Interns" value={activeInterns.length} tone="success" />
               <StatCard label="On Leave" value={1} tone="gold" />
@@ -219,6 +234,7 @@ export default function StaffPortalPage({
               <select value={status} onChange={(event) => setStatus(event.target.value)}>
                 <option value="">All Statuses</option>
                 <option value="Active">Active</option>
+                <option value="On Leave">On Leave</option>
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
@@ -253,14 +269,12 @@ export default function StaffPortalPage({
                       </td>
                       <td>{formatDate(intern.startDate)}</td>
                       <td>
-                        <div>
-                          <span className={`status-pill ${intern.status.toLowerCase()}`}>
+                        <div className="status-cell">
+                          <span className={`status-pill ${intern.status.toLowerCase().replace(" ", "-")}`}>
                             {intern.status}
                           </span>
-                          {intern.status === "Inactive" && intern.reason && (
-                            <small style={{ display: "block", marginTop: "4px", color: "#62757c" }}>
-                              {intern.reason}
-                            </small>
+                          {intern.reason && (
+                            <small className="status-reason">{intern.reason}</small>
                           )}
                         </div>
                       </td>

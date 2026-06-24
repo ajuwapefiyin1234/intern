@@ -2,14 +2,20 @@ import { useState } from "react";
 import {
   BarChart3,
   Bell,
+  Building2,
+  Calendar,
   CheckSquare,
   ChevronDown,
   LayoutGrid,
   LogOut,
+  Menu,
   Moon,
   Settings,
+  Star,
   Sun,
+  UserCog,
   Users,
+  X,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import type { AuthSession } from "./App";
@@ -28,12 +34,18 @@ type PortalChromeProps = {
 const internNav = [
   { to: "/intern", label: "Overview", icon: LayoutGrid },
   { to: "/intern/tasks", label: "My Tasks", icon: CheckSquare },
+  { to: "/intern/attendance", label: "Attendance", icon: Calendar },
+  { to: "/intern/evaluations", label: "Evaluations", icon: Star },
   { to: "/intern/announcements", label: "Announcements", icon: Bell },
 ];
 
 const staffNav = [
   { to: "/staff", label: "Overview", icon: LayoutGrid },
   { to: "/staff/interns", label: "Manage Interns", icon: Users },
+  { to: "/staff/departments", label: "Departments", icon: Building2 },
+  { to: "/staff/supervisors", label: "Supervisors", icon: UserCog },
+  { to: "/staff/attendance", label: "Attendance", icon: Calendar },
+  { to: "/staff/evaluations", label: "Evaluations", icon: Star },
   { to: "/staff/announcements", label: "Announcements", icon: Bell },
   { to: "/staff/reports", label: "Task Reports", icon: BarChart3 },
 ];
@@ -47,7 +59,8 @@ export default function PortalChrome({
   children,
 }: PortalChromeProps) {
   const navigate = useNavigate();
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState(session?.profilePicture);
   const navItems = role === "staff" ? staffNav : internNav;
   const badge = role === "staff" ? "HR Staff" : "Intern";
@@ -75,88 +88,132 @@ export default function PortalChrome({
   };
 
   return (
-    <div className={`portal-app ${darkMode ? "dark" : ""}`}>
+    <div className={`portal-app ${darkMode ? "dark" : ""} ${collapsed ? "sidebar-collapsed" : ""}`}>
       <div className="portal-particles">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="portal-particle" />
         ))}
       </div>
-      <header className="portal-topbar">
-        <button className="portal-brand" type="button" onClick={() => navigate("/")}>
+
+      {/* LEFT SIDEBAR */}
+      <aside className={`portal-sidebar ${mobileOpen ? "mobile-open" : ""}`}>
+        <div className="sidebar-brand">
           <img src={logo} alt="" />
           <strong>D'accubin Interns</strong>
-          <span>{badge}</span>
-        </button>
+        </div>
 
-        <nav className="portal-tabs" aria-label={`${badge} navigation`}>
+        <div className="sidebar-profile">
+          <label style={{ position: "relative", cursor: "pointer", flexShrink: 0 }}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleProfilePictureUpload}
+              style={{ display: "none" }}
+            />
+            {profilePicture ? (
+              <img src={profilePicture} alt={displayName} className="sidebar-avatar" />
+            ) : (
+              <span className="sidebar-avatar">{initials}</span>
+            )}
+          </label>
+          <div className="sidebar-profile-info">
+            <span className="sidebar-name">{displayName}</span>
+            <span className="sidebar-badge">{badge}</span>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav" aria-label={`${badge} navigation`}>
           {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.to === `/${role}`}>
-              <item.icon size={16} />
-              {item.label}
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === `/${role}`}
+              className="sidebar-nav-item"
+              onClick={() => setMobileOpen(false)}
+            >
+              <item.icon size={18} />
+              <span>{item.label}</span>
               {item.label === "Announcements" && role === "intern" && (
-                <span className="notification-dot">1</span>
+                <span className="notification-badge">1</span>
               )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="portal-user">
+        <div className="sidebar-bottom">
           <button
-            className="portal-profile-trigger"
             type="button"
-            onClick={() => setProfileOpen(!profileOpen)}
-            aria-label="Open profile menu"
+            className="sidebar-bottom-item"
+            onClick={() => onToggleDarkMode()}
           >
-            {profilePicture ? (
-              <img
-                src={profilePicture}
-                alt={displayName}
-                className="portal-user-avatar"
-                style={{ width: "32px", height: "32px", borderRadius: "999px", objectFit: "cover" }}
-              />
-            ) : (
-              <span className="portal-user-avatar">{initials}</span>
-            )}
-            <span className="portal-user-name">{displayName}</span>
-            <ChevronDown size={15} className={profileOpen ? "chevron-rotated" : ""} />
+            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
           </button>
-
-          {profileOpen && (
-            <div className="profile-dropdown">
-              <label className="profile-upload-label">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfilePictureUpload}
-                  style={{ display: "none" }}
-                />
-                <span>Upload Profile Picture</span>
-              </label>
-              <button type="button" onClick={() => setProfileOpen(false)}>
-                <Settings size={14} />
-                Profile Settings
-              </button>
-              <button type="button" onClick={() => setProfileOpen(false)}>
-                <Bell size={14} />
-                Notifications
-              </button>
-              <button type="button" onClick={() => { onToggleDarkMode(); setProfileOpen(false); }}>
-                {darkMode ? <Sun size={14} /> : <Moon size={14} />}
-                {darkMode ? "Light Mode" : "Dark Mode"}
-              </button>
-              <button type="button" onClick={() => setProfileOpen(false)}>
-                Help & Support
-              </button>
-              <div className="profile-dropdown-divider" />
-              <button type="button" onClick={() => { onLogout(); setProfileOpen(false); }}>
-                <LogOut size={14} />
-                Logout
-              </button>
-            </div>
-          )}
+          <button
+            type="button"
+            className="sidebar-bottom-item"
+            onClick={() => { navigate(role === "staff" ? "/staff/profile" : "/intern/profile"); setMobileOpen(false); }}
+          >
+            <Settings size={16} />
+            <span>Profile</span>
+          </button>
+          <button
+            type="button"
+            className="sidebar-bottom-item"
+            onClick={() => { onLogout(); setMobileOpen(false); }}
+          >
+            <LogOut size={16} />
+            <span>Logout</span>
+          </button>
         </div>
-      </header>
-      {children}
+
+        <button
+          type="button"
+          className="sidebar-mobile-close"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Close menu"
+        >
+          <X size={18} />
+        </button>
+
+        <button
+          type="button"
+          className="sidebar-collapse"
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <ChevronDown size={16} className={collapsed ? "" : "chevron-rotated"} />
+        </button>
+      </aside>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="sidebar-mobile-overlay" onClick={() => setMobileOpen(false)} />
+      )}
+
+      {/* MAIN CONTENT */}
+      <div className="portal-content-wrapper">
+        <header className="portal-content-header">
+          <div className="content-header-left">
+            <button
+              type="button"
+              className="sidebar-mobile-toggle"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu size={20} />
+            </button>
+            <h1>{role === "staff" ? "Staff Dashboard" : "Intern Portal"}</h1>
+          </div>
+          <div className="content-header-actions">
+            <button type="button" className="icon-button" aria-label="Notifications">
+              <Bell size={18} />
+            </button>
+          </div>
+        </header>
+        {children}
+      </div>
+
       <button className="help-button" type="button" aria-label="Help">
         ?
       </button>

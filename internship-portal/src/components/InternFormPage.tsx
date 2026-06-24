@@ -2,7 +2,7 @@ import { ArrowLeft, Save, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/Logo.svg";
-import type { Department, Intern, Status } from "./types";
+import type { DepartmentName, Intern, Status } from "./types";
 import { DEPARTMENTS } from "./types";
 import "./InternFormPage.css";
 
@@ -17,7 +17,7 @@ interface InternFormPageProps {
 interface FormData {
   name: string;
   email: string;
-  department: Department | "";
+  department: DepartmentName | "";
   startDate: string;
   status: Status;
   reason: string;
@@ -160,7 +160,7 @@ export function InternFormPage({
               <select
                 value={form.department}
                 onChange={(event) =>
-                  updateForm("department", event.target.value as Department | "")
+                  updateForm("department", event.target.value as DepartmentName | "")
                 }
               >
                 <option value="">Select department</option>
@@ -190,13 +190,14 @@ export function InternFormPage({
                 }
               >
                 <option value="Active">Active</option>
+                <option value="On Leave">On Leave</option>
                 <option value="Inactive">Inactive</option>
               </select>
             </label>
 
-            {form.status === "Inactive" && (
+            {(form.status === "Inactive" || form.status === "On Leave") && (
               <label>
-                Reason for Inactivity
+                Reason
                 <input
                   type="text"
                   value={form.reason}

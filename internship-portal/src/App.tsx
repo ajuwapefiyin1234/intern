@@ -19,6 +19,12 @@ import Login from "./Login";
 import Navbar from "./Navbar";
 import Signup from "./Signup";
 import StaffPortalPage from "./StaffPortalPage";
+import PortalChrome from "./PortalChrome";
+import DepartmentsPage from "./pages/DepartmentsPage";
+import SupervisorsPage from "./pages/SupervisorsPage";
+import AttendancePage from "./pages/AttendancePage";
+import EvaluationsPage from "./pages/EvaluationsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 type ThemeProps = {
   darkMode: boolean;
@@ -289,6 +295,87 @@ export default function App() {
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/departments"
+          element={
+            <ProtectedRoute role="staff" session={session}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <DepartmentsPage />
+              </PortalChrome>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/supervisors"
+          element={
+            <ProtectedRoute role="staff" session={session}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <SupervisorsPage />
+              </PortalChrome>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/attendance"
+          element={
+            <ProtectedRoute role="staff" session={session}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <AttendancePage role="staff" />
+              </PortalChrome>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/evaluations"
+          element={
+            <ProtectedRoute role="staff" session={session}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <EvaluationsPage role="staff" />
+              </PortalChrome>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff/profile"
+          element={
+            <ProtectedRoute role="staff" session={session}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <ProfilePage role="staff" />
+              </PortalChrome>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/intern/attendance"
+          element={
+            <ProtectedRoute role="intern" session={session}>
+              <PortalChrome role="intern" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <AttendancePage role="intern" internId={1} />
+              </PortalChrome>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/intern/evaluations"
+          element={
+            <ProtectedRoute role="intern" session={session}>
+              <PortalChrome role="intern" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <EvaluationsPage role="intern" internId={1} />
+              </PortalChrome>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/intern/profile"
+          element={
+            <ProtectedRoute role="intern" session={session}>
+              <PortalChrome role="intern" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <ProfilePage role="intern" />
+              </PortalChrome>
             </ProtectedRoute>
           }
         />

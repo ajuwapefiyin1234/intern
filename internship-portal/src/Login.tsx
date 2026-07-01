@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { ArrowRight, Eye, UserRound } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { AuthRole } from "./App";
+import logo from "./assets/Logo.svg";
 import "./Auth.css";
 
 type LoginProps = {
@@ -118,7 +119,7 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
           Back to home
         </Link>
         <div className="auth-mark">
-          <span>D</span>
+          <img src={logo} alt="" />
         </div>
         <h1>Welcome back.</h1>
         <p>

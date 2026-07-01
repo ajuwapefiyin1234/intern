@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import type { AuthRole } from "./App";
+import logo from "./assets/Logo.svg";
 import "./Auth.css";
 
 type SignupProps = {
@@ -93,7 +94,7 @@ export default function Signup({ darkMode, onSignup }: SignupProps) {
           Back to home
         </Link>
         <div className="auth-mark">
-          <span>D</span>
+          <img src={logo} alt="" />
         </div>
         <h1>Create your portal.</h1>
         <p>

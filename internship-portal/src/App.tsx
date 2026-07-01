@@ -57,10 +57,25 @@ function readStoredSession(): AuthSession | null {
   }
 }
 
-function PublicLayout({ darkMode, onToggleDarkMode }: ThemeProps) {
+type PublicLayoutProps = ThemeProps & {
+  session: AuthSession | null;
+  onLogout: () => void;
+};
+
+function PublicLayout({
+  darkMode,
+  onToggleDarkMode,
+  session,
+  onLogout,
+}: PublicLayoutProps) {
   return (
     <div className={`public-shell ${darkMode ? "dark" : "light"}`}>
-      <Navbar darkMode={darkMode} onToggleDarkMode={onToggleDarkMode} />
+      <Navbar
+        darkMode={darkMode}
+        onToggleDarkMode={onToggleDarkMode}
+        session={session}
+        onLogout={onLogout}
+      />
       <Outlet />
       <Footer />
     </div>
@@ -160,6 +175,8 @@ export default function App() {
             <PublicLayout
               darkMode={darkMode}
               onToggleDarkMode={toggleDarkMode}
+              session={session}
+              onLogout={handleLogout}
             />
           }
         >

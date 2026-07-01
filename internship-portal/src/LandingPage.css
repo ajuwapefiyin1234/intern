@@ -228,6 +228,7 @@
 
 .primary-action,
 .secondary-action {
+  margin-top: 15px;
   flex: 0 0 auto;
   min-height: 52px;
   padding: 14px 32px;

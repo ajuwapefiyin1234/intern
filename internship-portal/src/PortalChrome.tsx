@@ -5,7 +5,6 @@ import {
   Building2,
   Calendar,
   CheckSquare,
-  ChevronDown,
   LayoutGrid,
   LogOut,
   Menu,
@@ -20,12 +19,14 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import type { AuthSession } from "./App";
 import logo from "./assets/Logo.svg";
+import { readAndValidateProfilePicture } from "./lib/profilePicture";
 import "./PortalApp.css";
 
 type PortalChromeProps = {
   role: "intern" | "staff";
   session: AuthSession | null;
   onLogout: () => void;
+  onUpdateProfile: (updates: Partial<AuthSession>) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   children: React.ReactNode;
@@ -54,18 +55,18 @@ export default function PortalChrome({
   role,
   session,
   onLogout,
+  onUpdateProfile,
   darkMode,
   onToggleDarkMode,
   children,
 }: PortalChromeProps) {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(session?.profilePicture);
   const [uploadError, setUploadError] = useState("");
   const navItems = role === "staff" ? staffNav : internNav;
   const badge = role === "staff" ? "HR Staff" : "Intern";
   const displayName = session?.name ?? (role === "staff" ? "Admin" : "Marcus");
+  const profilePicture = session?.profilePicture;
   const initials = displayName
     .split(" ")
     .map((word) => word[0])
@@ -73,47 +74,20 @@ export default function PortalChrome({
     .slice(0, 2)
     .toUpperCase();
 
-  const MAX_PHOTO_SIZE = 1.5 * 1024 * 1024; // 1.5MB - keeps localStorage usage reasonable
-
   const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploadError("");
 
-    if (!file.type.startsWith("image/")) {
-      setUploadError("Please choose an image file.");
-      return;
-    }
-
-    if (file.size > MAX_PHOTO_SIZE) {
-      setUploadError("That image is too large. Please choose one under 1.5MB.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const dataUrl = reader.result as string;
-      setProfilePicture(dataUrl);
-      if (session) {
-        const updatedSession = { ...session, profilePicture: dataUrl };
-        try {
-          localStorage.setItem("interns-portal-session", JSON.stringify(updatedSession));
-        } catch {
-          setUploadError(
-            "Your browser's storage is full, so the photo couldn't be saved. It will still show for this session."
-          );
-        }
-      }
-    };
-    reader.onerror = () => {
-      setUploadError("Couldn't read that file. Please try a different image.");
-    };
-    reader.readAsDataURL(file);
+    readAndValidateProfilePicture(file, {
+      onSuccess: (dataUrl) => onUpdateProfile({ profilePicture: dataUrl }),
+      onError: (message) => setUploadError(message),
+    });
   };
 
   return (
-    <div className={`portal-app ${darkMode ? "dark" : ""} ${collapsed ? "sidebar-collapsed" : ""}`}>
+    <div className={`portal-app ${darkMode ? "dark" : ""}`}>
       <div className="portal-particles">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="portal-particle" />
@@ -170,14 +144,6 @@ export default function PortalChrome({
           <button
             type="button"
             className="sidebar-bottom-item"
-            onClick={() => onToggleDarkMode()}
-          >
-            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
-          </button>
-          <button
-            type="button"
-            className="sidebar-bottom-item"
             onClick={() => { navigate(role === "staff" ? "/staff/profile" : "/intern/profile"); setMobileOpen(false); }}
           >
             <Settings size={16} />
@@ -201,15 +167,6 @@ export default function PortalChrome({
         >
           <X size={18} />
         </button>
-
-        <button
-          type="button"
-          className="sidebar-collapse"
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          <ChevronDown size={16} className={collapsed ? "" : "chevron-rotated"} />
-        </button>
       </aside>
 
       {/* Mobile overlay */}
@@ -232,6 +189,15 @@ export default function PortalChrome({
             <h1>{role === "staff" ? "Staff Dashboard" : "Intern Portal"}</h1>
           </div>
           <div className="content-header-actions">
+            <button
+              type="button"
+              className="icon-button"
+              onClick={onToggleDarkMode}
+              aria-label="Toggle dark mode"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <button type="button" className="icon-button" aria-label="Notifications">
               <Bell size={18} />
             </button>

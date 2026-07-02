@@ -14,6 +14,7 @@ type InternPortalPageProps = {
   session: AuthSession | null;
   view: "overview" | "tasks" | "announcements";
   onLogout: () => void;
+  onUpdateProfile: (updates: Partial<AuthSession>) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
 };
@@ -37,6 +38,7 @@ export default function InternPortalPage({
   session,
   view,
   onLogout,
+  onUpdateProfile,
   darkMode,
   onToggleDarkMode,
 }: InternPortalPageProps) {
@@ -115,7 +117,7 @@ export default function InternPortalPage({
   };
 
   return (
-    <PortalChrome role="intern" session={session} onLogout={onLogout} darkMode={darkMode} onToggleDarkMode={onToggleDarkMode}>
+    <PortalChrome role="intern" session={session} onLogout={onLogout} onUpdateProfile={onUpdateProfile} darkMode={darkMode} onToggleDarkMode={onToggleDarkMode}>
       <main className="portal-main">
         {view === "overview" && (
           <>

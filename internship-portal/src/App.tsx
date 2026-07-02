@@ -38,6 +38,8 @@ export type AuthSession = {
   email: string;
   name: string;
   profilePicture?: string;
+  phone?: string;
+  bio?: string;
 };
 
 type ProtectedRouteProps = {
@@ -140,6 +142,15 @@ export default function App() {
     window.localStorage.removeItem(SESSION_KEY);
   };
 
+  const handleUpdateProfile = (updates: Partial<AuthSession>) => {
+    setSession((current) => {
+      if (!current) return current;
+      const nextSession = { ...current, ...updates };
+      window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
+      return nextSession;
+    });
+  };
+
   const handleAdd = (data: Omit<Intern, "id" | "avatar">) => {
     setInterns((currentInterns) => [
       ...currentInterns,
@@ -208,6 +219,7 @@ export default function App() {
                 session={session}
                 view="overview"
                 onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
@@ -222,6 +234,7 @@ export default function App() {
                 session={session}
                 view="tasks"
                 onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
@@ -236,6 +249,7 @@ export default function App() {
                 session={session}
                 view="announcements"
                 onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
@@ -255,6 +269,7 @@ export default function App() {
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
                 onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
@@ -273,6 +288,7 @@ export default function App() {
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
                 onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
@@ -291,6 +307,7 @@ export default function App() {
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
                 onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
@@ -309,6 +326,7 @@ export default function App() {
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
                 onLogout={handleLogout}
+                onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
                 onToggleDarkMode={toggleDarkMode}
               />
@@ -319,7 +337,7 @@ export default function App() {
           path="/staff/departments"
           element={
             <ProtectedRoute role="staff" session={session}>
-              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
                 <DepartmentsPage />
               </PortalChrome>
             </ProtectedRoute>
@@ -329,7 +347,7 @@ export default function App() {
           path="/staff/supervisors"
           element={
             <ProtectedRoute role="staff" session={session}>
-              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
                 <SupervisorsPage />
               </PortalChrome>
             </ProtectedRoute>
@@ -339,7 +357,7 @@ export default function App() {
           path="/staff/attendance"
           element={
             <ProtectedRoute role="staff" session={session}>
-              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
                 <AttendancePage role="staff" />
               </PortalChrome>
             </ProtectedRoute>
@@ -349,7 +367,7 @@ export default function App() {
           path="/staff/evaluations"
           element={
             <ProtectedRoute role="staff" session={session}>
-              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
                 <EvaluationsPage role="staff" />
               </PortalChrome>
             </ProtectedRoute>
@@ -359,8 +377,8 @@ export default function App() {
           path="/staff/profile"
           element={
             <ProtectedRoute role="staff" session={session}>
-              <PortalChrome role="staff" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
-                <ProfilePage role="staff" />
+              <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <ProfilePage role="staff" session={session} onUpdateProfile={handleUpdateProfile} />
               </PortalChrome>
             </ProtectedRoute>
           }
@@ -370,7 +388,7 @@ export default function App() {
           path="/intern/attendance"
           element={
             <ProtectedRoute role="intern" session={session}>
-              <PortalChrome role="intern" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+              <PortalChrome role="intern" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
                 <AttendancePage role="intern" internId={1} />
               </PortalChrome>
             </ProtectedRoute>
@@ -380,7 +398,7 @@ export default function App() {
           path="/intern/evaluations"
           element={
             <ProtectedRoute role="intern" session={session}>
-              <PortalChrome role="intern" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+              <PortalChrome role="intern" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
                 <EvaluationsPage role="intern" internId={1} />
               </PortalChrome>
             </ProtectedRoute>
@@ -390,8 +408,8 @@ export default function App() {
           path="/intern/profile"
           element={
             <ProtectedRoute role="intern" session={session}>
-              <PortalChrome role="intern" session={session} onLogout={handleLogout} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
-                <ProfilePage role="intern" />
+              <PortalChrome role="intern" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                <ProfilePage role="intern" session={session} onUpdateProfile={handleUpdateProfile} />
               </PortalChrome>
             </ProtectedRoute>
           }

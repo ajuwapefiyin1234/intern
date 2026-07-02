@@ -20,6 +20,7 @@ type StaffPortalPageProps = {
   onEdit: (intern: Intern) => void;
   onDelete: (id: number) => void;
   onLogout: () => void;
+  onUpdateProfile: (updates: Partial<AuthSession>) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
 };
@@ -32,6 +33,7 @@ export default function StaffPortalPage({
   onEdit,
   onDelete,
   onLogout,
+  onUpdateProfile,
   darkMode,
   onToggleDarkMode,
 }: StaffPortalPageProps) {
@@ -121,7 +123,7 @@ export default function StaffPortalPage({
   };
 
   return (
-    <PortalChrome role="staff" session={session} onLogout={onLogout} darkMode={darkMode} onToggleDarkMode={onToggleDarkMode}>
+    <PortalChrome role="staff" session={session} onLogout={onLogout} onUpdateProfile={onUpdateProfile} darkMode={darkMode} onToggleDarkMode={onToggleDarkMode}>
       <main className="portal-main">
         {view === "overview" && (
           <>

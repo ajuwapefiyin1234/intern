@@ -12,7 +12,6 @@ export default function Footer(_props: FooterProps) {
         <strong>D'accubin Interns</strong>
         <span>A unified home for internship discovery and program management.</span>
       </div>
-      
     </footer>
   );
 }

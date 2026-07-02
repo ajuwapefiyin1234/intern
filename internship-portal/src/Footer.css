@@ -1,5 +1,5 @@
 .site-footer {
-  padding: 14px 32px;
+  padding: 10px 32px;
   border-top: 1px solid var(--border);
   background: var(--surface);
   color: var(--text-muted);
@@ -19,16 +19,9 @@
 }
 
 .site-footer span {
-  font-size: 0.9rem;
+  font-size: 0.84rem;
 }
-
-.site-footer nav {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
-}
-
+ 
 .site-footer a {
   color: var(--text-muted);
   font-weight: 800;
@@ -43,6 +36,6 @@
   .site-footer {
     align-items: flex-start;
     flex-direction: column;
-    padding: 14px 18px;
+    padding: 10px 18px;
   }
 }

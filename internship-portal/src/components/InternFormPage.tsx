@@ -111,8 +111,8 @@ export function InternFormPage({
     <div className={`form-page ${darkMode ? "dark" : "light"}`}>
       <header className="form-navbar">
         <div className="form-navbar-inner">
-          <img src={logo} alt="Interns Portal logo" />
-          <span>Interns Portal</span>
+          <img src={logo} alt="D'accubin Interns logo" />
+          <span>D'accubin Interns</span>
         </div>
       </header>
 

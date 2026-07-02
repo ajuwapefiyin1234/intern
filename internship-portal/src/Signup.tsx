@@ -8,7 +8,7 @@ import "./Auth.css";
 
 type SignupProps = {
   darkMode: boolean;
-  onSignup: (role: AuthRole, email: string) => void;
+  onSignup: (role: AuthRole, email: string, name?: string) => void;
 };
 
 const signupMetrics = [
@@ -57,8 +57,8 @@ export default function Signup({ darkMode, onSignup }: SignupProps) {
     setError("");
   };
 
-  const finishSignup = (email: string) => {
-    onSignup("intern", email);
+  const finishSignup = (email: string, name?: string) => {
+    onSignup("intern", email, name);
     navigate("/intern", { replace: true });
   };
 
@@ -80,7 +80,7 @@ export default function Signup({ darkMode, onSignup }: SignupProps) {
       return;
     }
 
-    finishSignup(form.email.trim());
+    finishSignup(form.email.trim(), form.name.trim());
   };
 
   return (

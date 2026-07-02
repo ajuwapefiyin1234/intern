@@ -167,6 +167,14 @@
   color: var(--text-muted);
 }
 
+.sidebar-upload-error {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #df3246;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
 .sidebar-nav {
   flex: 1;
   display: flex;

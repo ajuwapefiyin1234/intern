@@ -62,6 +62,7 @@ export default function PortalChrome({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState(session?.profilePicture);
+  const [uploadError, setUploadError] = useState("");
   const navItems = role === "staff" ? staffNav : internNav;
   const badge = role === "staff" ? "HR Staff" : "Intern";
   const displayName = session?.name ?? (role === "staff" ? "Admin" : "Marcus");
@@ -72,19 +73,43 @@ export default function PortalChrome({
     .slice(0, 2)
     .toUpperCase();
 
+  const MAX_PHOTO_SIZE = 1.5 * 1024 * 1024; // 1.5MB - keeps localStorage usage reasonable
+
   const handleProfilePictureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePicture(reader.result as string);
-        if (session) {
-          const updatedSession = { ...session, profilePicture: reader.result as string };
-          localStorage.setItem("interns-portal-session", JSON.stringify(updatedSession));
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    setUploadError("");
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please choose an image file.");
+      return;
     }
+
+    if (file.size > MAX_PHOTO_SIZE) {
+      setUploadError("That image is too large. Please choose one under 1.5MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = reader.result as string;
+      setProfilePicture(dataUrl);
+      if (session) {
+        const updatedSession = { ...session, profilePicture: dataUrl };
+        try {
+          localStorage.setItem("interns-portal-session", JSON.stringify(updatedSession));
+        } catch {
+          setUploadError(
+            "Your browser's storage is full, so the photo couldn't be saved. It will still show for this session."
+          );
+        }
+      }
+    };
+    reader.onerror = () => {
+      setUploadError("Couldn't read that file. Please try a different image.");
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -119,6 +144,7 @@ export default function PortalChrome({
           <div className="sidebar-profile-info">
             <span className="sidebar-name">{displayName}</span>
             <span className="sidebar-badge">{badge}</span>
+            {uploadError && <span className="sidebar-upload-error">{uploadError}</span>}
           </div>
         </div>
 

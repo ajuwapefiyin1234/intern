@@ -8,7 +8,7 @@ type InternshipsPageProps = {
   darkMode: boolean;
 };
 
-const departments = ["All", "Technology", "Finance", "Marketing", "HR"];
+const departments = ["All", "Technology", "Finance", "Marketing", "HR", "Operations"];
 
 export default function InternshipsPage({ darkMode }: InternshipsPageProps) {
   const [query, setQuery] = useState("");

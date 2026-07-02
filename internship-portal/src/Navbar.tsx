@@ -1,4 +1,4 @@
-import { LayoutDashboard, LogOut, Moon, Sun } from "lucide-react";
+import { LayoutDashboard, LogIn, LogOut, Moon, Sun } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import type { AuthSession } from "./App";
 import logo from "./assets/Logo.svg";
@@ -55,15 +55,16 @@ export default function Navbar({
         {session ? (
           <button type="button" className="login-link" onClick={handleLogout}>
             <LogOut size={15} />
-            Logout
+            <span>Logout</span>
           </button>
         ) : (
           <>
             <Link to="/login" className="login-link">
-              Login
+              <LogIn size={15} />
+              <span>Login</span>
             </Link>
             <Link to="/signup" className="nav-cta">
-              Apply
+              <span>Apply</span>
             </Link>
           </>
         )}

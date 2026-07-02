@@ -1,6 +1,7 @@
 import {
   BadgeDollarSign,
   BriefcaseBusiness,
+  ClipboardList,
   Code2,
   LineChart,
   Megaphone,
@@ -84,6 +85,22 @@ export const internshipPostings: InternshipPosting[] = [
       "Help improve the candidate-to-intern handoff.",
     ],
   },
+  {
+    id: 5,
+    title: "Operations Intern",
+    department: "Operations",
+    location: "On-site",
+    duration: "10 weeks",
+    status: "Open",
+    summary:
+      "Support day-to-day program operations, process documentation, and cross-team coordination.",
+    skills: ["Process improvement", "Coordination", "Documentation"],
+    highlights: [
+      "Help streamline onboarding and internal workflows.",
+      "Coordinate logistics across departments.",
+      "Document standard operating procedures.",
+    ],
+  },
 ];
 
 export const featuredDepartments = [
@@ -110,6 +127,12 @@ export const featuredDepartments = [
     summary:
       "Recruiting support, onboarding, mentorship programs, and employee experience.",
     icon: Users,
+  },
+  {
+    name: "Operations",
+    summary:
+      "Process improvement, logistics, cross-team coordination, and program operations.",
+    icon: ClipboardList,
   },
 ];
 

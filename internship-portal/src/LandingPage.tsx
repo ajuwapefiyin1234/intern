@@ -90,10 +90,15 @@ export default function LandingPage({ darkMode }: LandingPageProps) {
   ];
 
   const stats = [
-    { value: "95%", label: "Intern Satisfaction" },
-    { value: "85%", label: "Full-time Offers" },
-    { value: "50+", label: "Partner Companies" },
-    { value: "12", label: "Weeks Average" },
+    {
+      value: String(
+        internshipPostings.filter((posting) => posting.status === "Open").length
+      ),
+      label: "Open Positions",
+    },
+    { value: String(featuredDepartments.length), label: "Departments" },
+    { value: "8-12 wks", label: "Program Length" },
+    { value: "Rolling", label: "Admissions" },
   ];
 
   return (
@@ -124,8 +129,8 @@ export default function LandingPage({ darkMode }: LandingPageProps) {
               View internships
               <ArrowRight size={17} />
             </Link>
-            <Link to="/dashboard" className="secondary-action">
-              Staff dashboard
+            <Link to="/login?role=staff" className="secondary-action">
+              Staff login
             </Link>
           </div>
           <div className="hero-trust">
@@ -310,7 +315,7 @@ export default function LandingPage({ darkMode }: LandingPageProps) {
               <span>Comprehensive reporting</span>
             </li>
           </ul>
-          <Link to="/dashboard" className="primary-action">
+          <Link to="/login?role=staff" className="primary-action">
             Access staff portal
             <ArrowRight size={17} />
           </Link>
@@ -318,33 +323,27 @@ export default function LandingPage({ darkMode }: LandingPageProps) {
         <div className="staff-preview">
           <div className="preview-card">
             <div className="preview-header">
-              <span>Active Interns</span>
+              <span>Program Snapshot</span>
               <Star size={16} className="preview-star" />
             </div>
             <div className="preview-list">
-              <div className="preview-row">
-                <span className="preview-avatar">SN</span>
-                <div className="preview-info">
-                  <span className="preview-name">Sophia Nguyen</span>
-                  <span className="preview-role">Frontend Intern</span>
-                </div>
-                <strong className="status-badge active">Active</strong>
+              <div className="preview-stat-row">
+                <span>Departments tracked</span>
+                <strong>{featuredDepartments.length}</strong>
               </div>
-              <div className="preview-row">
-                <span className="preview-avatar alt">MC</span>
-                <div className="preview-info">
-                  <span className="preview-name">Marcus Chen</span>
-                  <span className="preview-role">Finance Intern</span>
-                </div>
-                <strong className="status-badge active">Active</strong>
+              <div className="preview-stat-row">
+                <span>Open positions</span>
+                <strong>
+                  {
+                    internshipPostings.filter(
+                      (posting) => posting.status === "Open"
+                    ).length
+                  }
+                </strong>
               </div>
-              <div className="preview-row">
-                <span className="preview-avatar quiet">JO</span>
-                <div className="preview-info">
-                  <span className="preview-name">James Okafor</span>
-                  <span className="preview-role">Marketing Intern</span>
-                </div>
-                <strong className="status-badge inactive">Inactive</strong>
+              <div className="preview-stat-row">
+                <span>Task &amp; evaluation tracking</span>
+                <strong>Built in</strong>
               </div>
             </div>
           </div>
@@ -395,14 +394,14 @@ export default function LandingPage({ darkMode }: LandingPageProps) {
             <span>Apply and sign in</span>
             <p>Create your profile and apply</p>
           </Link>
-          <Link to="/dashboard" className="process-item">
+          <div className="process-item" style={{ cursor: "default" }}>
             <div className="process-number">03</div>
             <div className="process-icon">
               <Building2 size={22} />
             </div>
-            <span>Join the program</span>
-            <p>Start your internship journey</p>
-          </Link>
+            <span>Start your internship</span>
+            <p>Get matched with a mentor and begin your track.</p>
+          </div>
         </div>
       </section>
     </main>

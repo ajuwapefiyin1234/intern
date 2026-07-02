@@ -77,7 +77,7 @@ function PublicLayout({
         onLogout={onLogout}
       />
       <Outlet />
-      <Footer />
+      <Footer session={session} />
     </div>
   );
 }
@@ -125,11 +125,11 @@ export default function App() {
       .toUpperCase()
       .slice(0, 2);
 
-  const handleLogin = (role: AuthRole, email: string) => {
+  const handleLogin = (role: AuthRole, email: string, name?: string) => {
     const nextSession: AuthSession = {
       role,
       email,
-      name: role === "staff" ? "Admin" : "Marcus",
+      name: name?.trim() || (role === "staff" ? "Admin" : "Marcus"),
     };
     setSession(nextSession);
     window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));

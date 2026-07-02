@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
-import { ArrowRight, Eye, UserRound } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, UserRound } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { AuthRole } from "./App";
 import logo from "./assets/Logo.svg";
@@ -96,6 +96,17 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
 
     if (!email.trim() || !password.trim()) {
       setError("Enter your email and password.");
+      return;
+    }
+
+    const account = demoAccounts[mode];
+    const emailMatches = email.trim().toLowerCase() === account.email.toLowerCase();
+    const passwordMatches = password === account.password;
+
+    if (!emailMatches || !passwordMatches) {
+      setError(
+        "Invalid email or password. Use \u201cFill demo credentials\u201d below to try this demo."
+      );
       return;
     }
 
@@ -200,11 +211,15 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Enter your password"
                 />
-                <Eye
-                  size={16}
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: "pointer" }}
-                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </span>
             </label>
 

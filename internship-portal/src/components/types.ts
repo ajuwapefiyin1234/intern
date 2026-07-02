@@ -77,6 +77,10 @@ export const DEPARTMENTS: DepartmentName[] = [
   "HR",
 ];
 
+// NOTE: `reason` holds free-text leave/inactivity context (e.g. medical, family).
+// This is mock data for the demo only. If this becomes real intern data, gate
+// visibility of `reason` to staff/HR roles only — don't expose it to other interns
+// or on any public-facing view.
 export const MOCK_INTERNS: Intern[] = [
   { id: 1, name: "Sophia Nguyen", email: "sophia.nguyen@intern.co", department: "Finance", startDate: "2026-01-15", status: "Active", avatar: "SN", supervisorId: 1 },
   { id: 2, name: "Marcus Chen", email: "marcus.chen@intern.co", department: "Technology", startDate: "2026-01-20", status: "Active", avatar: "MC", supervisorId: 2 },

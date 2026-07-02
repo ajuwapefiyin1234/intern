@@ -70,12 +70,20 @@ function PublicLayout({
   session,
   onLogout,
 }: PublicLayoutProps) {
+  const location = useLocation();
+  const guestNavbarPaths = ["/", "/internships"];
+  const navbarSession = guestNavbarPaths.some(
+    (path) => location.pathname === path || location.pathname.startsWith(`${path}/`)
+  )
+    ? null
+    : session;
+
   return (
     <div className={`public-shell ${darkMode ? "dark" : "light"}`}>
       <Navbar
         darkMode={darkMode}
         onToggleDarkMode={onToggleDarkMode}
-        session={session}
+        session={navbarSession}
         onLogout={onLogout}
       />
       <Outlet />

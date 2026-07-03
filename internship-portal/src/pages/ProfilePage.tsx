@@ -77,7 +77,7 @@ export default function ProfilePage({ role, session, onUpdateProfile }: ProfileP
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 16 }}>
             <div className="staff-intern-cell" style={{ justifyContent: "flex-start" }}>
-              <label style={{ position: "relative", cursor: "pointer", flexShrink: 0 }}>
+              <label className="profile-avatar-upload">
                 <input
                   type="file"
                   accept="image/*"
@@ -85,29 +85,11 @@ export default function ProfilePage({ role, session, onUpdateProfile }: ProfileP
                   style={{ display: "none" }}
                 />
                 {session?.profilePicture ? (
-                  <img
-                    src={session.profilePicture}
-                    alt={name}
-                    style={{ width: 48, height: 48, borderRadius: "999px", objectFit: "cover", display: "block" }}
-                  />
+                  <img src={session.profilePicture} alt={name} className="profile-avatar" />
                 ) : (
-                  <span style={{ width: 48, height: 48, fontSize: "1.1rem" }}>{initials}</span>
+                  <span className="profile-avatar">{initials}</span>
                 )}
-                <span
-                  style={{
-                    position: "absolute",
-                    bottom: -2,
-                    right: -2,
-                    width: 20,
-                    height: 20,
-                    borderRadius: "999px",
-                    background: "var(--accent)",
-                    color: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <span className="profile-avatar-badge">
                   <Camera size={11} />
                 </span>
               </label>
@@ -227,7 +209,7 @@ export default function ProfilePage({ role, session, onUpdateProfile }: ProfileP
             <h2>Assigned Supervisor</h2>
           </div>
           <div className="staff-intern-cell" style={{ marginTop: 12, justifyContent: "flex-start" }}>
-            <span>{MOCK_PROFILE.supervisorName?.split(" ").map((w) => w[0]).join("")}</span>
+            <span className="profile-avatar">{MOCK_PROFILE.supervisorName?.split(" ").map((w) => w[0]).join("")}</span>
             <div>
               <strong>{MOCK_PROFILE.supervisorName}</strong>
               <span>Your point of contact for the program</span>

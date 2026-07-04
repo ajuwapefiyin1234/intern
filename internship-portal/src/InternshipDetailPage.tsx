@@ -39,13 +39,13 @@ export default function InternshipDetailPage({
           </div>
         </div>
         <aside className="apply-panel">
-          <h2>Ready to apply?</h2>
+          <h2>Already signed up?</h2>
           <p>
-            Create a candidate account to save your profile and continue with
-            this internship opportunity.
+            Access your intern page to manage your profile, tasks, and
+            internship updates after creating an account.
           </p>
-          <Link to="/signup" className="primary-action detail-apply">
-            Start application
+          <Link to="/intern" className="primary-action detail-apply">
+            Access intern page
             <ArrowRight size={17} />
           </Link>
         </aside>

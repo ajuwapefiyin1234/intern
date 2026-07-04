@@ -1,7 +1,7 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { AuthRole } from "./App";
 import logo from "./assets/Logo.svg";
 import "./Auth.css";
@@ -44,6 +44,7 @@ function GoogleLogo() {
 
 export default function Signup({ darkMode, onSignup }: SignupProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -58,8 +59,14 @@ export default function Signup({ darkMode, onSignup }: SignupProps) {
   };
 
   const finishSignup = (email: string, name?: string) => {
+    const nextPath = searchParams.get("next");
+    const signupDestination =
+      nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
+        ? nextPath
+        : "/internships";
+
     onSignup("intern", email, name);
-    navigate("/intern", { replace: true });
+    navigate(signupDestination, { replace: true });
   };
 
   const handleSubmit = (event: FormEvent) => {

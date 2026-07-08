@@ -210,7 +210,9 @@ export default function App() {
           />
           <Route
             path="/internships/:id"
-            element={<InternshipDetailPage darkMode={darkMode} />}
+            element={
+              <InternshipDetailPage darkMode={darkMode} session={session} />
+            }
           />
           <Route path="/candidate" element={<Navigate to="/intern" replace />} />
           <Route

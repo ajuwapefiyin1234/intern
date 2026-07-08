@@ -1,17 +1,24 @@
 import { ArrowLeft, ArrowRight, CheckCircle2, MapPin } from "lucide-react";
 import { Link, Navigate, useParams } from "react-router-dom";
+import type { AuthSession } from "./App";
 import { internshipPostings } from "./portalData";
 import "./InternshipDetailPage.css";
 
 type InternshipDetailPageProps = {
   darkMode: boolean;
+  session: AuthSession | null;
 };
 
 export default function InternshipDetailPage({
   darkMode,
+  session,
 }: InternshipDetailPageProps) {
   const { id } = useParams();
   const posting = internshipPostings.find((item) => item.id === Number(id));
+  const accessInternPath =
+    session?.role === "intern"
+      ? "/intern"
+      : `/signup?next=${encodeURIComponent("/intern")}`;
 
   if (!posting) {
     return <Navigate to="/internships" replace />;
@@ -44,7 +51,7 @@ export default function InternshipDetailPage({
             Access your intern page to manage your profile, tasks, and
             internship updates after creating an account.
           </p>
-          <Link to="/intern" className="primary-action detail-apply">
+          <Link to={accessInternPath} className="primary-action detail-apply">
             Access intern page
             <ArrowRight size={17} />
           </Link>

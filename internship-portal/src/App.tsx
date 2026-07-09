@@ -102,11 +102,15 @@ function ProtectedRoute({ role, session, children }: ProtectedRouteProps) {
   const location = useLocation();
 
   if (!session) {
+    const nextPath = `${location.pathname}${location.search}`;
+    const redirectTo =
+      role === "intern"
+        ? `/signup?next=${encodeURIComponent(nextPath)}`
+        : `/login?role=${role}&next=${encodeURIComponent(nextPath)}`;
+
     return (
       <Navigate
-        to={`/login?role=${role}&next=${encodeURIComponent(
-          location.pathname
-        )}`}
+        to={redirectTo}
         replace
       />
     );
@@ -235,7 +239,9 @@ export default function App() {
           />
           <Route
             path="/internships/:id"
-            element={<InternshipDetailPage darkMode={darkMode} />}
+            element={
+              <InternshipDetailPage darkMode={darkMode} session={session} />
+            }
           />
           <Route path="/candidate" element={<Navigate to="/intern" replace />} />
         </Route>

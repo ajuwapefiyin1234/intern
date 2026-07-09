@@ -9,7 +9,9 @@ import {
 } from "react-router-dom";
 import { InternFormPage } from "./components/InternFormPage";
 import { MOCK_INTERNS } from "./components/types";
-import type { Intern } from "./components/types";
+import type { DepartmentName, Intern } from "./components/types";
+import { portalTasks } from "./portalAppData";
+import type { PortalTask } from "./portalAppData";
 import Footer from "./Footer";
 import InternshipDetailPage from "./InternshipDetailPage";
 import InternshipsPage from "./InternshipsPage";
@@ -40,6 +42,10 @@ export type AuthSession = {
   profilePicture?: string;
   phone?: string;
   bio?: string;
+  // Only meaningful when role === "staff": distinguishes HR (full access)
+  // from a department Supervisor (scoped to their own department).
+  staffRole?: "hr" | "supervisor";
+  department?: DepartmentName;
 };
 
 type ProtectedRouteProps = {
@@ -87,7 +93,7 @@ function PublicLayout({
         onLogout={onLogout}
       />
       <Outlet />
-      <Footer session={session} />
+      <Footer />
     </div>
   );
 }
@@ -121,6 +127,10 @@ export default function App() {
   const [session, setSession] = useState<AuthSession | null>(() =>
     readStoredSession()
   );
+  // Shared task list: single source of truth so a task a supervisor assigns
+  // actually shows up in the intern's own "My Tasks" view, and so creating a
+  // task never mutates the imported demo array directly.
+  const [tasks, setTasks] = useState<PortalTask[]>(portalTasks);
 
   const toggleDarkMode = () => {
     setDarkMode((prev) => !prev);
@@ -135,11 +145,19 @@ export default function App() {
       .toUpperCase()
       .slice(0, 2);
 
-  const handleLogin = (role: AuthRole, email: string, name?: string) => {
+  const handleLogin = (
+    role: AuthRole,
+    email: string,
+    name?: string,
+    staffRole?: "hr" | "supervisor",
+    department?: DepartmentName
+  ) => {
     const nextSession: AuthSession = {
       role,
       email,
       name: name?.trim() || (role === "staff" ? "Admin" : "Marcus"),
+      staffRole,
+      department,
     };
     setSession(nextSession);
     window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
@@ -186,6 +204,17 @@ export default function App() {
     );
   };
 
+  // A supervisor only ever sees interns in their own department. HR sees
+  // everyone. This mirrors the department-scoping enforced on the backend.
+  const visibleInterns =
+    session?.role === "staff" &&
+    session.staffRole === "supervisor" &&
+    session.department
+      ? interns.filter((intern) => intern.department === session.department)
+      : interns;
+
+  const isSupervisor = session?.staffRole === "supervisor";
+
   return (
     <BrowserRouter>
       <Routes>
@@ -209,15 +238,18 @@ export default function App() {
             element={<InternshipDetailPage darkMode={darkMode} />}
           />
           <Route path="/candidate" element={<Navigate to="/intern" replace />} />
-          <Route
-            path="/login"
-            element={<Login darkMode={darkMode} onLogin={handleLogin} />}
-          />
-          <Route
-            path="/signup"
-            element={<Signup darkMode={darkMode} onSignup={handleLogin} />}
-          />
         </Route>
+
+        {/* Login/Signup render standalone — no site Navbar/Footer, to match
+            the clean, full-bleed auth screen design. */}
+        <Route
+          path="/login"
+          element={<Login darkMode={darkMode} session={session} onLogout={handleLogout} onLogin={handleLogin} />}
+        />
+        <Route
+          path="/signup"
+          element={<Signup darkMode={darkMode} onSignup={handleLogin} />}
+        />
 
         <Route
           path="/intern"
@@ -226,6 +258,8 @@ export default function App() {
               <InternPortalPage
                 session={session}
                 view="overview"
+                tasks={tasks}
+                onTasksChange={setTasks}
                 onLogout={handleLogout}
                 onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
@@ -241,6 +275,8 @@ export default function App() {
               <InternPortalPage
                 session={session}
                 view="tasks"
+                tasks={tasks}
+                onTasksChange={setTasks}
                 onLogout={handleLogout}
                 onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
@@ -256,6 +292,8 @@ export default function App() {
               <InternPortalPage
                 session={session}
                 view="announcements"
+                tasks={tasks}
+                onTasksChange={setTasks}
                 onLogout={handleLogout}
                 onUpdateProfile={handleUpdateProfile}
                 darkMode={darkMode}
@@ -270,9 +308,11 @@ export default function App() {
           element={
             <ProtectedRoute role="staff" session={session}>
               <StaffPortalPage
-                interns={interns}
+                interns={visibleInterns}
                 session={session}
                 view="overview"
+                tasks={tasks}
+                onTasksChange={setTasks}
                 onAdd={() => setEditingIntern(null)}
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
@@ -289,9 +329,11 @@ export default function App() {
           element={
             <ProtectedRoute role="staff" session={session}>
               <StaffPortalPage
-                interns={interns}
+                interns={visibleInterns}
                 session={session}
                 view="interns"
+                tasks={tasks}
+                onTasksChange={setTasks}
                 onAdd={() => setEditingIntern(null)}
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
@@ -308,9 +350,11 @@ export default function App() {
           element={
             <ProtectedRoute role="staff" session={session}>
               <StaffPortalPage
-                interns={interns}
+                interns={visibleInterns}
                 session={session}
                 view="announcements"
+                tasks={tasks}
+                onTasksChange={setTasks}
                 onAdd={() => setEditingIntern(null)}
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
@@ -327,9 +371,11 @@ export default function App() {
           element={
             <ProtectedRoute role="staff" session={session}>
               <StaffPortalPage
-                interns={interns}
+                interns={visibleInterns}
                 session={session}
                 view="reports"
+                tasks={tasks}
+                onTasksChange={setTasks}
                 onAdd={() => setEditingIntern(null)}
                 onEdit={(intern) => setEditingIntern(intern)}
                 onDelete={handleDelete}
@@ -345,9 +391,13 @@ export default function App() {
           path="/staff/departments"
           element={
             <ProtectedRoute role="staff" session={session}>
-              <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
-                <DepartmentsPage />
-              </PortalChrome>
+              {isSupervisor ? (
+                <Navigate to="/staff" replace />
+              ) : (
+                <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                  <DepartmentsPage />
+                </PortalChrome>
+              )}
             </ProtectedRoute>
           }
         />
@@ -355,9 +405,13 @@ export default function App() {
           path="/staff/supervisors"
           element={
             <ProtectedRoute role="staff" session={session}>
-              <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
-                <SupervisorsPage />
-              </PortalChrome>
+              {isSupervisor ? (
+                <Navigate to="/staff" replace />
+              ) : (
+                <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
+                  <SupervisorsPage />
+                </PortalChrome>
+              )}
             </ProtectedRoute>
           }
         />
@@ -366,7 +420,7 @@ export default function App() {
           element={
             <ProtectedRoute role="staff" session={session}>
               <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
-                <AttendancePage role="staff" />
+                <AttendancePage role="staff" department={isSupervisor ? session?.department : undefined} />
               </PortalChrome>
             </ProtectedRoute>
           }
@@ -376,7 +430,7 @@ export default function App() {
           element={
             <ProtectedRoute role="staff" session={session}>
               <PortalChrome role="staff" session={session} onLogout={handleLogout} onUpdateProfile={handleUpdateProfile} darkMode={darkMode} onToggleDarkMode={toggleDarkMode}>
-                <EvaluationsPage role="staff" />
+                <EvaluationsPage role="staff" department={isSupervisor ? session?.department : undefined} />
               </PortalChrome>
             </ProtectedRoute>
           }

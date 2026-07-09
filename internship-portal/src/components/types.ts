@@ -86,19 +86,19 @@ export const MOCK_INTERNS: Intern[] = [
   { id: 2, name: "Marcus Chen", email: "marcus.chen@intern.co", department: "Technology", startDate: "2026-01-20", status: "Active", avatar: "MC", supervisorId: 2 },
   { id: 3, name: "Amelia Torres", email: "amelia.torres@intern.co", department: "Marketing", startDate: "2026-02-03", status: "Active", avatar: "AT", supervisorId: 3 },
   { id: 4, name: "James Okafor", email: "james.okafor@intern.co", department: "Operations", startDate: "2026-02-10", status: "Inactive", avatar: "JO", supervisorId: 1, reason: "Medical leave — expected return 2026-08-01" },
-  { id: 5, name: "Priya Sharma", email: "priya.sharma@intern.co", department: "HR", startDate: "2026-02-14", status: "Active", avatar: "PS", supervisorId: 4 },
+  { id: 5, name: "Priya Sharma", email: "priya.sharma@intern.co", department: "HR", startDate: "2026-02-14", status: "Active", avatar: "PS", supervisorId: 5 },
   { id: 6, name: "Luca Ferreira", email: "luca.ferreira@intern.co", department: "Finance", startDate: "2026-03-01", status: "Active", avatar: "LF", supervisorId: 1 },
   { id: 7, name: "Yuki Tanaka", email: "yuki.tanaka@intern.co", department: "Technology", startDate: "2026-03-05", status: "Active", avatar: "YT", supervisorId: 2 },
   { id: 8, name: "Nia Williams", email: "nia.williams@intern.co", department: "Marketing", startDate: "2026-03-11", status: "Inactive", avatar: "NW", supervisorId: 3, reason: "Academic break — returning next semester" },
   { id: 9, name: "Oliver Beckett", email: "oliver.beckett@intern.co", department: "Finance", startDate: "2026-03-18", status: "Active", avatar: "OB", supervisorId: 1 },
   { id: 10, name: "Sara Kowalski", email: "sara.kowalski@intern.co", department: "Operations", startDate: "2026-04-01", status: "Active", avatar: "SK", supervisorId: 4 },
   { id: 11, name: "Darius Osei", email: "darius.osei@intern.co", department: "Technology", startDate: "2026-04-07", status: "On Leave", avatar: "DO", supervisorId: 2, reason: "Family emergency — 2 weeks" },
-  { id: 12, name: "Elena Popescu", email: "elena.popescu@intern.co", department: "HR", startDate: "2026-04-14", status: "Active", avatar: "EP", supervisorId: 4 },
+  { id: 12, name: "Elena Popescu", email: "elena.popescu@intern.co", department: "HR", startDate: "2026-04-14", status: "Active", avatar: "EP", supervisorId: 5 },
   { id: 13, name: "Arjun Patel", email: "arjun.patel@intern.co", department: "Finance", startDate: "2026-04-21", status: "On Leave", avatar: "AP", supervisorId: 1, reason: "Personal leave — 1 week" },
   { id: 14, name: "Chiara Romano", email: "chiara.romano@intern.co", department: "Marketing", startDate: "2026-05-05", status: "Active", avatar: "CR", supervisorId: 3 },
   { id: 15, name: "Felix Braun", email: "felix.braun@intern.co", department: "Technology", startDate: "2026-05-12", status: "Active", avatar: "FB", supervisorId: 2 },
   { id: 16, name: "Amara Diallo", email: "amara.diallo@intern.co", department: "Operations", startDate: "2026-05-19", status: "Active", avatar: "AD", supervisorId: 4 },
-  { id: 17, name: "Noah Jansen", email: "noah.jansen@intern.co", department: "HR", startDate: "2026-05-26", status: "Inactive", avatar: "NJ", supervisorId: 4, reason: "Program completed — offboarded" },
+  { id: 17, name: "Noah Jansen", email: "noah.jansen@intern.co", department: "HR", startDate: "2026-05-26", status: "Inactive", avatar: "NJ", supervisorId: 5, reason: "Program completed — offboarded" },
   { id: 18, name: "Isabella Cruz", email: "isabella.cruz@intern.co", department: "Finance", startDate: "2026-06-02", status: "Active", avatar: "IC", supervisorId: 1 },
   { id: 19, name: "Kevin Adeyemi", email: "kevin.adeyemi@intern.co", department: "Marketing", startDate: "2026-06-09", status: "Active", avatar: "KA", supervisorId: 3 },
   { id: 20, name: "Zoe Fischer", email: "zoe.fischer@intern.co", department: "Technology", startDate: "2026-06-15", status: "Active", avatar: "ZF", supervisorId: 2 }
@@ -117,6 +117,7 @@ export const MOCK_SUPERVISORS: Supervisor[] = [
   { id: 2, name: "David Kim", email: "david.kim@company.com", department: "Technology", internCount: 5, avatar: "DK" },
   { id: 3, name: "Maria Gonzalez", email: "maria.gonzalez@company.com", department: "Marketing", internCount: 4, avatar: "MG" },
   { id: 4, name: "Robert Chen", email: "robert.chen@company.com", department: "Operations", internCount: 3, avatar: "RC" },
+  { id: 5, name: "Amara Bello", email: "amara.bello@company.com", department: "HR", internCount: 3, avatar: "AB" },
 ];
 
 export const MOCK_ATTENDANCE: AttendanceRecord[] = [

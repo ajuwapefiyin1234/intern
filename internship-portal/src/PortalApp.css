@@ -72,8 +72,7 @@
   display: flex;
   flex-direction: column;
   padding: 20px 0;
-  border-right: 1px solid var(--border);
-  background: var(--surface);
+  background: #0b1418;
   transition: width 0.3s ease, transform 0.3s ease;
 }
 
@@ -82,7 +81,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 20px 20px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 16px;
   cursor: pointer;
 }
@@ -94,13 +93,30 @@
   flex-shrink: 0;
 }
 
+.sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
 .sidebar-brand strong {
-  color: var(--accent);
-  font-size: 1.05rem;
+  color: #ffffff;
+  font-size: 1.02rem;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
   transition: opacity 0.2s;
+}
+
+.sidebar-brand-subtitle {
+  color: var(--accent-soft);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .sidebar-profile {
@@ -116,7 +132,7 @@
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #08738a, #0f5c74);
+  background: linear-gradient(135deg, #38abc2, #0f5c74);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
@@ -137,7 +153,7 @@
 .sidebar-name {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--text-strong);
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -146,7 +162,7 @@
 .sidebar-badge {
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .profile-avatar-upload {
@@ -193,6 +209,31 @@
   margin-top: 2px;
 }
 
+.profile-input {
+  width: 100%;
+  height: 46px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 0.9rem;
+  outline: 0;
+  padding: 0 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profile-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+.profile-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
 .sidebar-nav {
   flex: 1;
   display: flex;
@@ -208,7 +249,7 @@
   gap: 12px;
   padding: 10px 14px;
   border-radius: 10px;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 600;
@@ -223,13 +264,14 @@
 }
 
 .sidebar-nav-item:hover {
-  background: var(--surface-muted);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
 }
 
 .sidebar-nav-item.active {
-  background: var(--accent-tint);
-  color: var(--accent);
+  background: linear-gradient(135deg, var(--accent), #0a7a94);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 96, 120, 0.35);
 }
 
 .notification-badge {
@@ -252,7 +294,7 @@
   flex-direction: column;
   gap: 2px;
   padding: 12px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin-top: auto;
 }
 
@@ -264,7 +306,7 @@
   border-radius: 10px;
   border: none;
   background: transparent;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.55);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -279,8 +321,8 @@
 }
 
 .sidebar-bottom-item:hover {
-  background: var(--surface-muted);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
 }
 
 .portal-content-wrapper {
@@ -876,6 +918,11 @@
   background: rgba(213, 154, 0, 0.15);
   color: #b58a09;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .announcement-card footer button:last-child {

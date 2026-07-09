@@ -1,39 +1,79 @@
 import type { FormEvent } from "react";
-import { useMemo, useState } from "react";
-import { ArrowRight, Eye, EyeOff, UserRound } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  ArrowRight,
+  Bell,
+  Building2,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  ShieldCheck,
+  TrendingUp,
+  UserRound,
+  Users,
+} from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import type { AuthRole } from "./App";
+import type { AuthRole, AuthSession } from "./App";
+import { DEPARTMENTS } from "./components/types";
+import type { DepartmentName } from "./components/types";
 import logo from "./assets/Logo.svg";
 import "./Auth.css";
 
+type LoginMode = "intern" | "hr" | "supervisor";
+
 type LoginProps = {
   darkMode: boolean;
-  onLogin: (role: AuthRole, email: string) => void;
+  session: AuthSession | null;
+  onLogout: () => void;
+  onLogin: (
+    role: AuthRole,
+    email: string,
+    name?: string,
+    staffRole?: "hr" | "supervisor",
+    department?: DepartmentName
+  ) => void;
 };
 
-const demoAccounts = {
+const demoAccounts: Record<LoginMode, { email: string; password: string }> = {
   intern: {
     email: "marcus.chen@intern.co",
     password: "intern123",
   },
-  staff: {
+  hr: {
     email: "admin@company.com",
+    password: "password",
+  },
+  supervisor: {
+    email: "supervisor@company.com",
     password: "password",
   },
 };
 
-const internMetrics = [
-  "View your tasks",
-  "Track your progress",
-  "Stay connected",
-  "Across 5 different departments",
+type Metric = {
+  icon: typeof Users;
+  title: string;
+  description: string;
+};
+
+const internMetrics: Metric[] = [
+  { icon: CheckCircle2, title: "View your tasks", description: "See everything assigned to you." },
+  { icon: TrendingUp, title: "Track your progress", description: "Watch your completion rate climb." },
+  { icon: Bell, title: "Stay connected", description: "Get announcements as they're posted." },
+  { icon: Building2, title: "Across 5 different departments", description: "One account, wherever you're placed." },
 ];
 
-const staffMetrics = [
-  "View active interns",
-  "Track team progress",
-  "Manage your team",
-  "Across 5 different departments",
+const hrMetrics: Metric[] = [
+  { icon: Users, title: "View every intern, company-wide", description: "See everyone across every department." },
+  { icon: Building2, title: "Manage departments & supervisors", description: "Full administrative control." },
+  { icon: TrendingUp, title: "Track team-wide progress", description: "Monitor performance at a glance." },
+  { icon: ShieldCheck, title: "Full program oversight", description: "Nothing is out of view." },
+];
+
+const supervisorMetrics: Metric[] = [
+  { icon: Users, title: "View interns in your department only", description: "See exactly who reports to you \u2014 no noise." },
+  { icon: CheckCircle2, title: "Track their progress", description: "Live task logs, progress bars, and blockers." },
+  { icon: ShieldCheck, title: "Give feedback & evaluations", description: "Score performance and leave structured notes." },
+  { icon: Building2, title: "Focused on your own team", description: "Department-scoped view keeps things relevant." },
 ];
 
 // Google "G" SVG logo
@@ -60,33 +100,69 @@ function GoogleLogo() {
   );
 }
 
-export default function Login({ darkMode, onLogin }: LoginProps) {
+function initialModeFromParam(param: string | null): LoginMode {
+  if (param === "supervisor") return "supervisor";
+  if (param === "hr" || param === "staff") return "hr";
+  return "intern";
+}
+
+export default function Login({ darkMode, session, onLogout, onLogin }: LoginProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialRole = searchParams.get("role") === "staff" ? "staff" : "intern";
   const nextPath = searchParams.get("next");
-  const [mode, setMode] = useState<AuthRole>(initialRole);
-  const [email, setEmail] = useState(demoAccounts[initialRole].email);
-  const [password, setPassword] = useState(demoAccounts[initialRole].password);
+  const [mode, setMode] = useState<LoginMode>(() =>
+    initialModeFromParam(searchParams.get("role"))
+  );
+  const [email, setEmail] = useState(demoAccounts[mode].email);
+  const [password, setPassword] = useState(demoAccounts[mode].password);
+  const [department, setDepartment] = useState<DepartmentName>("Technology");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [forgotNotice, setForgotNotice] = useState(false);
+
+  // Landing on the login screen — including via the browser's back button
+  // after being logged in — always ends any existing session. Otherwise a
+  // stale session would still be valid in the background, and the nav bar's
+  // "Staff Portal"/"My Portal" link would let someone straight back in
+  // without actually re-entering credentials.
+  useEffect(() => {
+    if (session) {
+      onLogout();
+    }
+    // Only ever run once per mount of the login screen, not on every session
+    // change (that would immediately log out someone who just submitted the
+    // form on this very page).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const role: AuthRole = mode === "intern" ? "intern" : "staff";
+  const staffRole: "hr" | "supervisor" | undefined =
+    mode === "hr" ? "hr" : mode === "supervisor" ? "supervisor" : undefined;
 
   const destination = useMemo(() => {
     if (nextPath) return nextPath;
-    return mode === "staff" ? "/staff" : "/intern";
-  }, [mode, nextPath]);
+    return role === "staff" ? "/staff" : "/intern";
+  }, [role, nextPath]);
 
-  const metrics = mode === "staff" ? staffMetrics : internMetrics;
+  const metrics =
+    mode === "hr" ? hrMetrics : mode === "supervisor" ? supervisorMetrics : internMetrics;
 
-  const switchMode = (role: AuthRole) => {
-    setMode(role);
-    setEmail(demoAccounts[role].email);
-    setPassword(demoAccounts[role].password);
+  const switchMode = (nextMode: LoginMode) => {
+    setMode(nextMode);
+    setEmail(demoAccounts[nextMode].email);
+    setPassword(demoAccounts[nextMode].password);
     setError("");
+    setForgotNotice(false);
   };
 
   const completeLogin = (loginEmail = email) => {
-    onLogin(mode, loginEmail.trim() || demoAccounts[mode].email);
+    onLogin(
+      role,
+      loginEmail.trim() || demoAccounts[mode].email,
+      undefined,
+      staffRole,
+      mode === "supervisor" ? department : undefined
+    );
     navigate(destination, { replace: true });
   };
 
@@ -105,7 +181,7 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
 
     if (!emailMatches || !passwordMatches) {
       setError(
-        "Invalid email or password. Use \u201cFill demo credentials\u201d below to try this demo."
+        "Invalid email or password. Use the demo credentials shown below."
       );
       return;
     }
@@ -114,33 +190,61 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
   };
 
   const handleGoogleLogin = () => {
-    completeLogin(
-      mode === "staff" ? "admin.google@company.com" : "marcus.google@intern.co"
-    );
+    const googleEmail =
+      mode === "intern"
+        ? "marcus.google@intern.co"
+        : mode === "hr"
+        ? "admin.google@company.com"
+        : "supervisor.google@company.com";
+    completeLogin(googleEmail);
+  };
+
+  const fillDemoCredentials = () => {
+    setEmail(demoAccounts[mode].email);
+    setPassword(demoAccounts[mode].password);
+    setError("");
   };
 
   return (
     <main className={`auth-page upgraded-auth ${darkMode ? "dark" : "light"}`}>
       <section className="auth-visual-panel">
-        {/* Floating orbs */}
-        <div className="orb-1" aria-hidden="true" />
-        <div className="orb-2" aria-hidden="true" />
+        {Array.from({ length: 5 }).map((_, r) =>
+          Array.from({ length: 4 }).map((_, c) => (
+            <div
+              key={`${r}-${c}`}
+              className="auth-grid-tile"
+              style={{ left: `${c * 22}%`, top: `${r * 22}%` }}
+            />
+          ))
+        )}
+        <div className="auth-glow-top" aria-hidden="true" />
+        <div className="auth-glow-bottom" aria-hidden="true" />
 
         <Link to="/" className="auth-back-link">
           Back to home
         </Link>
-        <div className="auth-mark">
-          <img src={logo} alt="" />
+
+        <div className="auth-brand-lockup">
+          <span className="auth-brand-icon">
+            <img src={logo} alt="" />
+          </span>
+          <strong>D'accubin Interns</strong>
         </div>
+
         <h1>Welcome back.</h1>
         <p>
           Sign in to manage your internship journey, track work, view notices,
           and stay connected with your team.
         </p>
-        <div className="auth-metrics text-only">
+
+        <div className="auth-metrics">
           {metrics.map((item) => (
-            <div key={item}>
-              <strong>{item}</strong>
+            <div key={item.title}>
+              <span className="auth-metric-icon">
+                <item.icon size={16} />
+              </span>
+              <strong>{item.title}</strong>
+              <span>{item.description}</span>
             </div>
           ))}
         </div>
@@ -155,24 +259,40 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
               onClick={() => switchMode("intern")}
             >
               <UserRound size={16} />
-              Intern Login
+              Intern
             </button>
             <button
               type="button"
-              className={mode === "staff" ? "active" : ""}
-              onClick={() => switchMode("staff")}
+              className={mode === "hr" ? "active" : ""}
+              onClick={() => switchMode("hr")}
             >
-              <UserRound size={16} />
-              HR / Staff Login
+              <ShieldCheck size={16} />
+              HR
+            </button>
+            <button
+              type="button"
+              className={mode === "supervisor" ? "active" : ""}
+              onClick={() => switchMode("supervisor")}
+            >
+              <Building2 size={16} />
+              Supervisor
             </button>
           </div>
 
           <div className="auth-heading">
-            <h1>{mode === "staff" ? "Staff Sign In" : "Intern Sign In"}</h1>
+            <h1>
+              {mode === "hr"
+                ? "HR Sign In"
+                : mode === "supervisor"
+                ? "Supervisor Sign In"
+                : "Intern Sign In"}
+            </h1>
             <p>
-              {mode === "staff"
-                ? "Access HR tools and intern management."
-                : "Access your intern dashboard and task tracker."}
+              {mode === "hr"
+                ? "Full access to every intern, department, and supervisor."
+                : mode === "supervisor"
+                ? "Access your own department's interns, attendance, and evaluations."
+                : "Track your tasks, view announcements, and stay on top of your internship journey."}
             </p>
           </div>
 
@@ -197,7 +317,7 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder={
-                  mode === "staff" ? "yourname@company.com" : "yourname@intern.co"
+                  mode === "intern" ? "yourname@intern.co" : "yourname@company.com"
                 }
               />
             </label>
@@ -223,6 +343,22 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
               </span>
             </label>
 
+            {mode === "supervisor" && (
+              <label>
+                Department you supervise
+                <select
+                  value={department}
+                  onChange={(event) => setDepartment(event.target.value as DepartmentName)}
+                >
+                  {DEPARTMENTS.map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+
             <button type="submit" className="auth-submit">
               Login
               <ArrowRight size={17} />
@@ -230,16 +366,33 @@ export default function Login({ darkMode, onLogin }: LoginProps) {
           </form>
 
           <div className="auth-helper-row">
-            <Link to="/signup">Create intern account</Link>
             <button
               type="button"
-              onClick={() => {
-                setEmail(demoAccounts[mode].email);
-                setPassword(demoAccounts[mode].password);
-              }}
+              className="auth-link-button"
+              onClick={() => setForgotNotice(true)}
             >
-              Fill demo credentials
+              Forgot password?
             </button>
+            <button type="button" onClick={fillDemoCredentials}>
+              Fill demo
+            </button>
+          </div>
+          {forgotNotice && (
+            <p className="auth-inline-note">
+              Password reset isn't available in this demo \u2014 use the credentials below.
+            </p>
+          )}
+
+          <p className="auth-signup-line">
+            New intern? <Link to="/signup">Create intern account</Link>{" "}
+            <span className="auth-signup-hint">· All demo credentials below</span>
+          </p>
+
+          <div className="auth-demo-box">
+            <span className="auth-demo-label">Demo ({mode})</span>
+            <span className="auth-demo-value">
+              {demoAccounts[mode].email} / {demoAccounts[mode].password}
+            </span>
           </div>
         </div>
       </section>

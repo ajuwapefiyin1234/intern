@@ -40,7 +40,7 @@ const internNav = [
   { to: "/intern/announcements", label: "Announcements", icon: Bell },
 ];
 
-const staffNav = [
+const staffNavHR = [
   { to: "/staff", label: "Overview", icon: LayoutGrid },
   { to: "/staff/interns", label: "Manage Interns", icon: Users },
   { to: "/staff/departments", label: "Departments", icon: Building2 },
@@ -49,6 +49,17 @@ const staffNav = [
   { to: "/staff/evaluations", label: "Evaluations", icon: Star },
   { to: "/staff/announcements", label: "Announcements", icon: Bell },
   { to: "/staff/reports", label: "Task Reports", icon: BarChart3 },
+];
+
+// A supervisor only manages their own department's interns — no company-wide
+// admin pages (Departments/Supervisors management, cross-department reports).
+const staffNavSupervisor = [
+  { to: "/staff", label: "Overview", icon: LayoutGrid },
+  { to: "/staff/interns", label: "My Interns", icon: Users },
+  { to: "/staff/attendance", label: "Attendance", icon: Calendar },
+  { to: "/staff/evaluations", label: "Evaluations", icon: Star },
+  { to: "/staff/announcements", label: "Announcements", icon: Bell },
+  { to: "/staff/reports", label: "Assign Tasks", icon: BarChart3 },
 ];
 
 export default function PortalChrome({
@@ -63,8 +74,14 @@ export default function PortalChrome({
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [uploadError, setUploadError] = useState("");
-  const navItems = role === "staff" ? staffNav : internNav;
-  const badge = role === "staff" ? "HR Staff" : "Intern";
+  const isSupervisor = role === "staff" && session?.staffRole === "supervisor";
+  const navItems = role === "staff" ? (isSupervisor ? staffNavSupervisor : staffNavHR) : internNav;
+  const badge =
+    role === "staff"
+      ? isSupervisor
+        ? `${session?.department ?? "Department"} Supervisor`
+        : "HR Staff"
+      : "Intern";
   const displayName = session?.name ?? (role === "staff" ? "Admin" : "Marcus");
   const profilePicture = session?.profilePicture;
   const initials = displayName
@@ -98,7 +115,12 @@ export default function PortalChrome({
       <aside className={`portal-sidebar ${mobileOpen ? "mobile-open" : ""}`}>
         <div className="sidebar-brand">
           <img src={logo} alt="" />
-          <strong>D'accubin Interns</strong>
+          <div className="sidebar-brand-text">
+            <strong>D'accubin Interns</strong>
+            <span className="sidebar-brand-subtitle">
+              {role === "staff" ? (isSupervisor ? "Supervisor Portal" : "HR Portal") : "Intern Portal"}
+            </span>
+          </div>
         </div>
 
         <div className="sidebar-profile">
@@ -186,7 +208,7 @@ export default function PortalChrome({
             >
               <Menu size={20} />
             </button>
-            <h1>{role === "staff" ? "Staff Dashboard" : "Intern Portal"}</h1>
+            <h1>{role === "staff" ? (isSupervisor ? "Supervisor Dashboard" : "HR Dashboard") : "Intern Portal"}</h1>
           </div>
           <div className="content-header-actions">
             <button

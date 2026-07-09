@@ -1,14 +1,15 @@
 import { useMemo, useState } from "react";
 import { Star, TrendingUp } from "lucide-react";
-import { MOCK_EVALUATIONS } from "../components/types";
-import type { Evaluation } from "../components/types";
+import { MOCK_EVALUATIONS, MOCK_INTERNS } from "../components/types";
+import type { DepartmentName, Evaluation } from "../components/types";
 
 type EvaluationsPageProps = {
   role: "intern" | "staff";
   internId?: number;
+  department?: DepartmentName;
 };
 
-export default function EvaluationsPage({ role, internId }: EvaluationsPageProps) {
+export default function EvaluationsPage({ role, internId, department }: EvaluationsPageProps) {
   const [evaluations] = useState<Evaluation[]>(MOCK_EVALUATIONS);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -16,8 +17,14 @@ export default function EvaluationsPage({ role, internId }: EvaluationsPageProps
     if (role === "intern" && internId) {
       return evaluations.filter((e) => e.internId === internId);
     }
+    if (role === "staff" && department) {
+      const departmentInternIds = new Set(
+        MOCK_INTERNS.filter((intern) => intern.department === department).map((intern) => intern.id)
+      );
+      return evaluations.filter((e) => departmentInternIds.has(e.internId));
+    }
     return evaluations;
-  }, [evaluations, role, internId]);
+  }, [evaluations, role, internId, department]);
 
   const avgScore = useMemo(() => {
     if (!filtered.length) return 0;

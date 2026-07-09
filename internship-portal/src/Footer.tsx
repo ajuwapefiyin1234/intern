@@ -1,11 +1,6 @@
-import type { AuthSession } from "./App";
 import "./Footer.css";
 
-type FooterProps = {
-  session: AuthSession | null;
-};
-
-export default function Footer(_props: FooterProps) {
+export default function Footer() {
   return (
     <footer className="site-footer">
       <div>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
-import { MOCK_ATTENDANCE } from "../components/types";
-import type { AttendanceRecord } from "../components/types";
+import { MOCK_ATTENDANCE, MOCK_INTERNS } from "../components/types";
+import type { AttendanceRecord, DepartmentName } from "../components/types";
 
 const statusIcons = {
   Present: CheckCircle2,
@@ -18,31 +18,49 @@ const statusColors = {
 type AttendancePageProps = {
   role: "intern" | "staff";
   internId?: number;
+  // When set (a department supervisor, not HR), attendance is scoped to
+  // only interns in this department.
+  department?: DepartmentName;
 };
 
-export default function AttendancePage({ role, internId }: AttendancePageProps) {
+export default function AttendancePage({ role, internId, department }: AttendancePageProps) {
   const [records] = useState<AttendanceRecord[]>(MOCK_ATTENDANCE);
   const [filter, setFilter] = useState<"All" | "Present" | "Late" | "Absent">("All");
+
+  const departmentInternIds = useMemo(() => {
+    if (!department) return null;
+    return new Set(
+      MOCK_INTERNS.filter((intern) => intern.department === department).map((intern) => intern.id)
+    );
+  }, [department]);
 
   const filtered = useMemo(() => {
     let data = records;
     if (role === "intern" && internId) {
       data = data.filter((r) => r.internId === internId);
     }
+    if (role === "staff" && departmentInternIds) {
+      data = data.filter((r) => departmentInternIds.has(r.internId));
+    }
     if (filter !== "All") {
       data = data.filter((r) => r.status === filter);
     }
     return data;
-  }, [records, role, internId, filter]);
+  }, [records, role, internId, departmentInternIds, filter]);
 
   const stats = useMemo(() => {
-    const data = role === "intern" && internId ? records.filter((r) => r.internId === internId) : records;
+    let data = records;
+    if (role === "intern" && internId) {
+      data = data.filter((r) => r.internId === internId);
+    } else if (role === "staff" && departmentInternIds) {
+      data = data.filter((r) => departmentInternIds.has(r.internId));
+    }
     const total = data.length;
     const present = data.filter((r) => r.status === "Present").length;
     const late = data.filter((r) => r.status === "Late").length;
     const absent = data.filter((r) => r.status === "Absent").length;
     return { total, present, late, absent, rate: total ? Math.round((present / total) * 100) : 0 };
-  }, [records, role, internId]);
+  }, [records, role, internId, departmentInternIds]);
 
   const today = new Date().toISOString().split("T")[0];
   const todayRecord = records.find((r) => r.date === today && (role === "staff" || r.internId === internId));

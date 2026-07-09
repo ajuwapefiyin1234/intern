@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { AlertTriangle, CheckCircle2, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { AuthSession } from "./App";
 import PortalChrome from "./PortalChrome";
 import {
   portalAnnouncements,
-  portalTasks,
   type PortalTask,
   type TaskStatus,
 } from "./portalAppData";
@@ -13,6 +13,8 @@ import {
 type InternPortalPageProps = {
   session: AuthSession | null;
   view: "overview" | "tasks" | "announcements";
+  tasks: PortalTask[];
+  onTasksChange: Dispatch<SetStateAction<PortalTask[]>>;
   onLogout: () => void;
   onUpdateProfile: (updates: Partial<AuthSession>) => void;
   darkMode: boolean;
@@ -37,12 +39,13 @@ const statusClass = {
 export default function InternPortalPage({
   session,
   view,
+  tasks,
+  onTasksChange,
   onLogout,
   onUpdateProfile,
   darkMode,
   onToggleDarkMode,
 }: InternPortalPageProps) {
-  const [tasks, setTasks] = useState<PortalTask[]>(portalTasks);
   const [filter, setFilter] = useState<TaskStatus | "All Statuses">(
     "All Statuses"
   );
@@ -72,7 +75,7 @@ export default function InternPortalPage({
     const cleanTitle = draftTitle.trim();
     if (!cleanTitle) return;
 
-    setTasks((current) => [
+    onTasksChange((current) => [
       ...current,
       {
         id: Date.now(),
@@ -91,7 +94,7 @@ export default function InternPortalPage({
   const handleEditTask = () => {
     if (!editingTask) return;
 
-    setTasks((current) =>
+    onTasksChange((current) =>
       current.map((task) =>
         task.id === editingTask.id
           ? {

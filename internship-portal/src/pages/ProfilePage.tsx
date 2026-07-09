@@ -12,15 +12,38 @@ type ProfilePageProps = {
 
 export default function ProfilePage({ role, session, onUpdateProfile }: ProfilePageProps) {
   // Real identity (name/email/phone/bio) comes from the logged-in session.
-  // Department/start date/supervisor aren't collected during signup yet, so
-  // those still fall back to demo placeholder context for now.
+  // Interns don't have a start date/department collected during signup yet,
+  // so those still fall back to demo placeholder context — but only for
+  // interns. Staff (HR/Supervisor) must NEVER fall back to intern-flavored
+  // mock data (wrong department, wrong bio, etc.) — a supervisor's real
+  // department is already known from their session.
+  const isStaff = role === "staff";
+  const isSupervisor = session?.staffRole === "supervisor";
+
   const name = session?.name ?? MOCK_PROFILE.name;
   const email = session?.email ?? MOCK_PROFILE.email;
 
+  const fallbackPhone = isStaff ? "+1 (555) 010-2044" : MOCK_PROFILE.phone;
+  const fallbackBio = isStaff
+    ? isSupervisor
+      ? "Supervises interns and reviews progress for their department."
+      : "HR team member overseeing the internship program."
+    : MOCK_PROFILE.bio;
+  const departmentDisplay = isStaff
+    ? isSupervisor
+      ? session?.department ?? "Not assigned"
+      : "All Departments (HR)"
+    : MOCK_PROFILE.department;
+  const roleLabel = isStaff
+    ? isSupervisor
+      ? `${session?.department ?? "Department"} Supervisor`
+      : "HR"
+    : "Intern";
+
   const [isEditing, setIsEditing] = useState(false);
   const [draftName, setDraftName] = useState(name);
-  const [draftPhone, setDraftPhone] = useState(session?.phone ?? MOCK_PROFILE.phone ?? "");
-  const [draftBio, setDraftBio] = useState(session?.bio ?? MOCK_PROFILE.bio ?? "");
+  const [draftPhone, setDraftPhone] = useState(session?.phone ?? fallbackPhone ?? "");
+  const [draftBio, setDraftBio] = useState(session?.bio ?? fallbackBio ?? "");
   const [uploadError, setUploadError] = useState("");
 
   const initials = name
@@ -40,8 +63,8 @@ export default function ProfilePage({ role, session, onUpdateProfile }: ProfileP
       });
     } else {
       setDraftName(name);
-      setDraftPhone(session?.phone ?? MOCK_PROFILE.phone ?? "");
-      setDraftBio(session?.bio ?? MOCK_PROFILE.bio ?? "");
+      setDraftPhone(session?.phone ?? fallbackPhone ?? "");
+      setDraftBio(session?.bio ?? fallbackBio ?? "");
     }
     setIsEditing((current) => !current);
   };
@@ -110,6 +133,7 @@ export default function ProfilePage({ role, session, onUpdateProfile }: ProfileP
                   <label style={{ display: "grid", gap: 4, fontSize: "0.8rem", color: "var(--text-muted)" }}>
                     Full name
                     <input
+                      className="profile-input"
                       value={draftName}
                       onChange={(event) => setDraftName(event.target.value)}
                       placeholder="Your full name"
@@ -118,6 +142,7 @@ export default function ProfilePage({ role, session, onUpdateProfile }: ProfileP
                   <label style={{ display: "grid", gap: 4, fontSize: "0.8rem", color: "var(--text-muted)" }}>
                     Phone
                     <input
+                      className="profile-input"
                       value={draftPhone}
                       onChange={(event) => setDraftPhone(event.target.value)}
                       placeholder="+1 (555) 123-4567"
@@ -139,25 +164,27 @@ export default function ProfilePage({ role, session, onUpdateProfile }: ProfileP
                     <Mail size={16} /> {email}
                   </label>
                   <label style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--text-muted)", fontSize: "0.875rem" }}>
-                    <Phone size={16} /> {session?.phone || MOCK_PROFILE.phone || "Not provided"}
+                    <Phone size={16} /> {session?.phone || fallbackPhone || "Not provided"}
                   </label>
                   <label style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--text-muted)", fontSize: "0.875rem" }}>
-                    <Building2 size={16} /> {MOCK_PROFILE.department || "Not assigned"}
+                    <Building2 size={16} /> {departmentDisplay}
                   </label>
+                  {role === "intern" && (
+                    <label style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--text-muted)", fontSize: "0.875rem" }}>
+                      <Calendar size={16} /> Started {MOCK_PROFILE.startDate || "N/A"}
+                    </label>
+                  )}
                   <label style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--text-muted)", fontSize: "0.875rem" }}>
-                    <Calendar size={16} /> Started {MOCK_PROFILE.startDate || "N/A"}
-                  </label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--text-muted)", fontSize: "0.875rem" }}>
-                    <Shield size={16} /> Role: {role === "staff" ? "HR Staff" : "Intern"}
+                    <Shield size={16} /> Role: {roleLabel}
                   </label>
                 </>
               )}
             </div>
 
-            {!isEditing && (session?.bio || MOCK_PROFILE.bio) && (
+            {!isEditing && (session?.bio || fallbackBio) && (
               <div style={{ marginTop: 8, padding: 16, borderRadius: 8, background: "var(--surface-muted)" }}>
                 <p style={{ fontSize: "0.875rem", color: "var(--text)", lineHeight: 1.6 }}>
-                  {session?.bio || MOCK_PROFILE.bio}
+                  {session?.bio || fallbackBio}
                 </p>
               </div>
             )}

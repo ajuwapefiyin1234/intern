@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { AlertTriangle, Edit3, Pin, Plus, Trash2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import type { AuthSession } from "./App";
@@ -8,14 +9,16 @@ import PortalChrome from "./PortalChrome";
 import {
   departmentProgress,
   portalAnnouncements,
-  portalTasks,
   type PortalAnnouncement,
+  type PortalTask,
 } from "./portalAppData";
 
 type StaffPortalPageProps = {
   interns: Intern[];
   session: AuthSession | null;
   view: "overview" | "interns" | "announcements" | "reports";
+  tasks: PortalTask[];
+  onTasksChange: Dispatch<SetStateAction<PortalTask[]>>;
   onAdd: () => void;
   onEdit: (intern: Intern) => void;
   onDelete: (id: number) => void;
@@ -29,6 +32,8 @@ export default function StaffPortalPage({
   interns,
   session,
   view,
+  tasks,
+  onTasksChange,
   onAdd,
   onEdit,
   onDelete,
@@ -52,9 +57,10 @@ export default function StaffPortalPage({
   const [taskDueDate, setTaskDueDate] = useState("");
   const [selectedInterns, setSelectedInterns] = useState<number[]>([]);
 
+  const isSupervisor = session?.staffRole === "supervisor";
   const activeInterns = interns.filter((intern) => intern.status === "Active");
   const inactiveInterns = interns.filter((intern) => intern.status === "Inactive");
-  const blockedTasks = portalTasks.filter((task) => task.status === "Blocked");
+  const blockedTasks = tasks.filter((task) => task.status === "Blocked");
 
   const visibleInterns = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -105,7 +111,7 @@ export default function StaffPortalPage({
       assignedTo: selectedInterns,
     };
 
-    portalTasks.push(newTask);
+    onTasksChange((current) => [...current, newTask]);
     setTaskTitle("");
     setTaskDescription("");
     setTaskCategory("Project");
@@ -129,12 +135,12 @@ export default function StaffPortalPage({
           <>
             <section className="portal-hero staff">
               <div>
-                <span>HR Dashboard - Week 25</span>
-                <h1>Good morning, HR Team</h1>
-                <p>Here's a snapshot of the current cohort.</p>
+                <span>{isSupervisor ? `${session?.department} Team - Week 25` : "HR Dashboard - Week 25"}</span>
+                <h1>Good morning, {isSupervisor ? `${session?.department} Team` : "HR Team"}</h1>
+                <p>{isSupervisor ? "Here's a snapshot of your department's interns." : "Here's a snapshot of the current cohort."}</p>
               </div>
               <aside className="hero-actions">
-                <Link to="/staff/interns" className="manage-interns">Manage Interns</Link>
+                <Link to="/staff/interns" className="manage-interns">{isSupervisor ? "My Interns" : "Manage Interns"}</Link>
                 <Link to="/staff/announcements" className="post-announcement">Post Announcement</Link>
               </aside>
             </section>
@@ -145,8 +151,12 @@ export default function StaffPortalPage({
                   <h2>Quick Links</h2>
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 }}>
-                  <Link to="/staff/departments" className="manage-interns" style={{ textDecoration: "none" }}>Departments</Link>
-                  <Link to="/staff/supervisors" className="manage-interns" style={{ textDecoration: "none" }}>Supervisors</Link>
+                  {!isSupervisor && (
+                    <>
+                      <Link to="/staff/departments" className="manage-interns" style={{ textDecoration: "none" }}>Departments</Link>
+                      <Link to="/staff/supervisors" className="manage-interns" style={{ textDecoration: "none" }}>Supervisors</Link>
+                    </>
+                  )}
                   <Link to="/staff/attendance" className="manage-interns" style={{ textDecoration: "none" }}>Attendance</Link>
                   <Link to="/staff/evaluations" className="manage-interns" style={{ textDecoration: "none" }}>Evaluations</Link>
                   <Link to="/staff/profile" className="manage-interns" style={{ textDecoration: "none" }}>Profile</Link>
@@ -203,7 +213,7 @@ export default function StaffPortalPage({
           <>
             <div className="portal-page-heading">
               <div>
-                <h1>Manage Interns</h1>
+                <h1>{isSupervisor ? "My Interns" : "Manage Interns"}</h1>
                 <p>{visibleInterns.length} interns</p>
               </div>
               <button

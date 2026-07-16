@@ -31,6 +31,7 @@ export const portalTasks: PortalTask[] = [
     status: "Completed",
     progress: 100,
     dueDate: "Jun 10",
+    assignedTo: [1],
   },
   {
     id: 2,
@@ -40,6 +41,7 @@ export const portalTasks: PortalTask[] = [
     status: "In Progress",
     progress: 65,
     dueDate: "Jun 30",
+    assignedTo: [1],
   },
   {
     id: 3,
@@ -49,6 +51,7 @@ export const portalTasks: PortalTask[] = [
     status: "In Progress",
     progress: 40,
     dueDate: "Jul 5",
+    assignedTo: [1],
   },
   {
     id: 4,
@@ -60,6 +63,7 @@ export const portalTasks: PortalTask[] = [
     dueDate: "Jun 27",
     blocker:
       "Waiting for project spec documents from the Product team before I can complete the report.",
+    assignedTo: [1],
   },
 ];
 

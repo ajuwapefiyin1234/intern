@@ -60,7 +60,23 @@ export default function StaffPortalPage({
   const isSupervisor = session?.staffRole === "supervisor";
   const activeInterns = interns.filter((intern) => intern.status === "Active");
   const inactiveInterns = interns.filter((intern) => intern.status === "Inactive");
+  const onLeaveInterns = interns.filter((intern) => intern.status === "On Leave");
   const blockedTasks = tasks.filter((task) => task.status === "Blocked");
+
+  // Real per-intern task counts/blockers, derived from the actual shared
+  // task list (assignedTo), instead of hardcoded IDs.
+  const internTaskCounts = useMemo(() => {
+    const map = new Map<number, { total: number; blocked: number }>();
+    tasks.forEach((task) => {
+      task.assignedTo?.forEach((internId) => {
+        const entry = map.get(internId) ?? { total: 0, blocked: 0 };
+        entry.total += 1;
+        if (task.status === "Blocked") entry.blocked += 1;
+        map.set(internId, entry);
+      });
+    });
+    return map;
+  }, [tasks]);
 
   const visibleInterns = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -166,7 +182,7 @@ export default function StaffPortalPage({
 
             <section className="portal-stat-grid">
               <StatCard label="Active Interns" value={activeInterns.length} tone="success" />
-              <StatCard label="On Leave" value={1} tone="gold" />
+              <StatCard label="On Leave" value={onLeaveInterns.length} tone="gold" />
               <StatCard label="Inactive" value={inactiveInterns.length} tone="danger" />
               <StatCard label="Blocked Tasks" value={blockedTasks.length} tone="danger" />
             </section>
@@ -380,39 +396,46 @@ export default function StaffPortalPage({
                 Assign Task
               </button>
             </div>
-            <div className="blocked-alert">
-              <AlertTriangle size={18} />
-              <div>
-                <strong>{blockedTasks.length} Blocked Tasks Need Attention</strong>
-                <p>
-                  Marcus Chen - Weekly status report: Waiting for project spec
-                  documents from the Product team.
-                </p>
+            {blockedTasks.length > 0 && (
+              <div className="blocked-alert">
+                <AlertTriangle size={18} />
+                <div>
+                  <strong>
+                    {blockedTasks.length} Blocked Task{blockedTasks.length > 1 ? "s" : ""} Need Attention
+                  </strong>
+                  <p>
+                    {blockedTasks[0].title}
+                    {blockedTasks[0].blocker ? `: ${blockedTasks[0].blocker}` : ""}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
             <section className="report-list">
-              {interns.slice(0, 8).map((intern) => (
-                <article
-                  key={intern.id}
-                  className={`report-row ${intern.id === 2 || intern.id === 7 ? "has-blocker" : ""}`}
-                >
-                  <div className="staff-intern-cell">
-                    <span>{intern.avatar}</span>
-                    <div>
-                      <strong>{intern.name}</strong>
-                      <small>{intern.department} - {intern.id % 4} tasks</small>
+              {interns.slice(0, 8).map((intern) => {
+                const counts = internTaskCounts.get(intern.id) ?? { total: 0, blocked: 0 };
+                return (
+                  <article
+                    key={intern.id}
+                    className={`report-row ${counts.blocked > 0 ? "has-blocker" : ""}`}
+                  >
+                    <div className="staff-intern-cell">
+                      <span>{intern.avatar}</span>
+                      <div>
+                        <strong>{intern.name}</strong>
+                        <small>{intern.department} - {counts.total} tasks</small>
+                      </div>
                     </div>
-                  </div>
-                  <div className="report-badges">
-                    {(intern.id === 2 || intern.id === 7) && (
-                      <span className="status-pill blocked">1 Blocked</span>
-                    )}
-                    <span className={`status-pill ${intern.status.toLowerCase()}`}>
-                      {intern.status}
-                    </span>
-                  </div>
-                </article>
-              ))}
+                    <div className="report-badges">
+                      {counts.blocked > 0 && (
+                        <span className="status-pill blocked">{counts.blocked} Blocked</span>
+                      )}
+                      <span className={`status-pill ${intern.status.toLowerCase()}`}>
+                        {intern.status}
+                      </span>
+                    </div>
+                  </article>
+                );
+              })}
             </section>
           </>
         )}

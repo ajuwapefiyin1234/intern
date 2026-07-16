@@ -85,6 +85,7 @@ export default function InternPortalPage({
         status: "Not Started",
         progress: 0,
         dueDate: "Jul 12",
+        assignedTo: [1],
       },
     ]);
     setDraftTitle("");
@@ -128,7 +129,7 @@ export default function InternPortalPage({
               <div>
                 <span>Week 25</span>
                 <h1>Welcome back, {session?.name ?? "Marcus"}</h1>
-                <p>Frontend Engineering Intern - Technology</p>
+                <p>Intern</p>
               </div>
               <aside>
                 <strong>Active</strong>
@@ -215,7 +216,7 @@ export default function InternPortalPage({
             <div className="portal-page-heading">
               <div>
                 <h1>Announcements</h1>
-                <p>Company-wide and Technology department notices</p>
+                <p>Company-wide and department notices</p>
               </div>
             </div>
             <section className="announcement-list">

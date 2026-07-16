@@ -161,3 +161,9 @@
     padding: 22px;
   }
 }
+
+@media (max-width: 480px) {
+  .detail-apply {
+    width: 100%;
+  }
+}

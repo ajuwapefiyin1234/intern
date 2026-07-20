@@ -118,3 +118,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .candidate-action {
+    width: 100%;
+  }
+}

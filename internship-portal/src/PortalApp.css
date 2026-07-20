@@ -1414,3 +1414,45 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .portal-content-header {
+    padding: 0 12px;
+  }
+
+  .portal-content-header h1 {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content-header-actions {
+    gap: 6px;
+  }
+
+  .portal-main {
+    width: calc(100% - 24px);
+  }
+
+  .portal-hero,
+  .portal-hero.staff,
+  .portal-card,
+  .task-row,
+  .announcement-card,
+  .report-row {
+    padding: 18px;
+  }
+
+  .portal-page-heading,
+  .announcement-card footer,
+  .report-badges {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .portal-primary-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

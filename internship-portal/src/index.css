@@ -53,10 +53,11 @@
   }
 
   body {
-    min-width: 320px;
+    width: 100%;
     min-height: 100svh;
     margin: 0;
     background: var(--page-bg);
+    overflow-x: clip;
   }
 
   button,
@@ -75,7 +76,9 @@
   }
 
   #root {
+    width: 100%;
     min-height: 100svh;
+    overflow-x: clip;
   }
 }
 

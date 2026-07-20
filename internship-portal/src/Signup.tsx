@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Bell, Building2, CheckCircle2, TrendingUp } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { AuthRole } from "./App";
 import logo from "./assets/Logo.svg";
@@ -11,11 +11,17 @@ type SignupProps = {
   onSignup: (role: AuthRole, email: string, name?: string) => void;
 };
 
-const signupMetrics = [
-  "View your tasks",
-  "Track your progress",
-  "Stay connected",
-  "Across 5 different departments",
+type Metric = {
+  icon: typeof CheckCircle2;
+  title: string;
+  description: string;
+};
+
+const signupMetrics: Metric[] = [
+  { icon: CheckCircle2, title: "View your tasks", description: "See everything assigned to you." },
+  { icon: TrendingUp, title: "Track your progress", description: "Watch your completion rate climb." },
+  { icon: Bell, title: "Stay connected", description: "Get announcements as they're posted." },
+  { icon: Building2, title: "Across 5 different departments", description: "One account, wherever you're placed." },
 ];
 
 // Google "G" SVG logo
@@ -93,25 +99,43 @@ export default function Signup({ darkMode, onSignup }: SignupProps) {
   return (
     <main className={`auth-page upgraded-auth ${darkMode ? "dark" : "light"}`}>
       <section className="auth-visual-panel">
-        {/* Floating orbs */}
-        <div className="orb-1" aria-hidden="true" />
-        <div className="orb-2" aria-hidden="true" />
+        {Array.from({ length: 5 }).map((_, r) =>
+          Array.from({ length: 4 }).map((_, c) => (
+            <div
+              key={`${r}-${c}`}
+              className="auth-grid-tile"
+              style={{ left: `${c * 22}%`, top: `${r * 22}%` }}
+            />
+          ))
+        )}
+        <div className="auth-glow-top" aria-hidden="true" />
+        <div className="auth-glow-bottom" aria-hidden="true" />
 
         <Link to="/" className="auth-back-link">
           Back to home
         </Link>
-        <div className="auth-mark">
-          <img src={logo} alt="" />
+
+        <div className="auth-brand-lockup">
+          <span className="auth-brand-icon">
+            <img src={logo} alt="" />
+          </span>
+          <strong>D'accubin Interns</strong>
         </div>
+
         <h1>Create your portal.</h1>
         <p>
           Join the internship workspace to track applications, tasks,
           announcements, and program progress.
         </p>
-        <div className="auth-metrics text-only">
+
+        <div className="auth-metrics">
           {signupMetrics.map((item) => (
-            <div key={item}>
-              <strong>{item}</strong>
+            <div key={item.title}>
+              <span className="auth-metric-icon">
+                <item.icon size={16} />
+              </span>
+              <strong>{item.title}</strong>
+              <span>{item.description}</span>
             </div>
           ))}
         </div>
@@ -136,7 +160,6 @@ export default function Signup({ darkMode, onSignup }: SignupProps) {
           <div className="auth-divider">or sign up with email</div>
 
           <div className="auth-note">
-            <CheckCircle2 size={17} />
             <span>Applications and status tracking live in the intern portal.</span>
           </div>
 
